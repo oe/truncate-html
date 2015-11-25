@@ -1,11 +1,29 @@
 # Truncate-html
 Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements.
 
-**Notice** This is a node modules depends on cheerio *can only run on nodejs*. If you need a browser version, you may conside [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
+**Notice** This is a node modules depends on cheerio *can only run on nodejs*. If you need a browser version, you may consider [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
 
 ## Method
 ```js
 truncate(html, [length], [options])
+```
+
+### Available options
+```
+{
+    length: Number, content length to truncate
+    stripTags: Boolean, whether remove tags
+    ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
+    excludes: String or Array, the seletor of the elements you want to ignore
+}
+```
+
+### Default options
+```js
+truncate.defaultOptions = {
+  stripTags: false,
+  ellipsis: '...'
+};
 ```
 
 ## Usage
@@ -68,10 +86,3 @@ truncate(html, {
 ```
 
 
-### default options
-```js
-truncate.defaultOptions = {
-  stripTags: false,
-  ellipsis: '...'
-};
-```
