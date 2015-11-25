@@ -26,8 +26,14 @@ truncate.defaultOptions = {
 };
 ```
 
+## Install
+```
+npm install truncate-html
+```
+
 ## Usage
 **Notice** Extra blank spaces in html content will be removed. If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final html content's length will be `options.length` + `options.ellipsis`.
+
 
 
 ```js
