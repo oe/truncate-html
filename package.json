@@ -1,0 +1,27 @@
+{
+  "name": "truncate-html",
+  "version": "0.0.1",
+  "description": "truncate html and keep tag in safe",
+  "main": "src/truncate.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://evecalm@github.com/evecalm/truncate-html.git"
+  },
+  "keywords": [
+    "truncate html",
+    "html",
+    "truncate"
+  ],
+  "author": "Saiya",
+  "license": "MIT",
+  "dependencies": {
+    "cheerio": ">0.0.1"
+  },
+  "bugs": {
+    "url": "https://github.com/evecalm/truncate-html/issues"
+  },
+  "homepage": "https://github.com/evecalm/truncate-html#readme"
+}
