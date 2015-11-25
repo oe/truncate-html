@@ -12,7 +12,7 @@ truncate(html, [length], [options])
 **Notice** Extra blank spaces in html content will be removed. If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final html content's length will be `options.length` + `options.ellipsis`.
 
 
-```
+```js
 // truncate html
 var html = '<p><img src="abc.png">This is a string</p> for test.';
 truncate(html, 10);
@@ -69,7 +69,7 @@ truncate(html, {
 
 
 ### default options
-```
+```js
 truncate.defaultOptions = {
   stripTags: false,
   ellipsis: '...'
