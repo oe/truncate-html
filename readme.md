@@ -31,6 +31,8 @@ truncate.defaultOptions = {
 
 
 ```js
+var truncate = require('truncate-html');
+
 // truncate html
 var html = '<p><img src="abc.png">This is a string</p> for test.';
 truncate(html, 10);
