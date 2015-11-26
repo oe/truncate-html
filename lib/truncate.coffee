@@ -45,7 +45,7 @@ truncate = (html, length, options)->
   #   <p>Lorem ipsum <span>dolor sit</span> amet, consectetur</p>
   #   tempor incididunt ut labore
   #
-  $ = cheerio.load "<div>#{html}</div>"
+  $ = cheerio.load "<div>#{html}</div>", decodeEntities: options.decodeEntities
   $html = $('div').first()
 
   # remove excludes elements
@@ -100,6 +100,8 @@ truncate.defaultOptions =
   stripTags: false
   # postfix of the string
   ellipsis: '...'
+  # decode html entities
+  decodeEntities: false
   # excludes: img
   # length: 0
 

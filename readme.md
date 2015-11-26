@@ -15,6 +15,7 @@ truncate(html, [length], [options])
     stripTags: Boolean, whether to remove tags
     ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
     excludes: String or Array, the selectors of the elements you want to ignore
+    decodeEntities: Boolean, auto decode html entities in the html string
 }
 ```
 
@@ -22,7 +23,8 @@ truncate(html, [length], [options])
 ```js
 truncate.defaultOptions = {
   stripTags: false,
-  ellipsis: '...'
+  ellipsis: '...',
+  decodeEntities: false
 };
 ```
 
@@ -33,7 +35,6 @@ npm install truncate-html
 
 ## Usage
 **Notice** Extra blank spaces in html content will be removed. If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final html content's length will be `options.length` + `options.ellipsis`.
-
 
 
 ```js
@@ -91,6 +92,45 @@ truncate(html, {
 });
 // returns: This is a string for~
 
+
+// handing encoded characters
+var html = '<p>&nbsp;test for &lt;p&gt; encoded string</p>'
+truncate(html, {
+    length: 20,
+    decodeEntities: true
+});
+// returns: <p> test for &lt;p&gt; encode...</p>
+
+// when set decodeEntities false
+var html = '<p>&nbsp;test for &lt;p&gt; encoded string</p>'
+truncate(html, {
+    length: 20,
+    decodeEntities: false // this is the dafault value
+});
+// returns: <p>&nbsp;test for &lt;p...</p>
+
+
+// and there may be a surprise by setting `decodeEntities` to true  when handing CJK characters
+var html = '<p>&nbsp;test for &lt;p&gt; 中文 string</p>'
+truncate(html, {
+    length: 20,
+    decodeEntities: true
+});
+// returns: <p> test for &lt;p&gt; &#x4E2D;&#x6587; str...</p>
+// to fix this, see below for instructions
+
 ```
+
+### Known issues
+Known issues about handing CJK characters when set the option `decodeEntities` to `true`.
+
+You have seen the option `decodeEntities`, it's really magic! When it's true, encoded html entities will be decoded automatically, so `&amp;` will be treat as a single character. This is probably what we want. But, if there are CJK characters in the html string, they will be replaced by characters like `&#xF6;` in the final html you get. That's confused.
+
+To fix this, you have two choices:
+
+- keep the option `decodeEntities` false, but `&amp;` will treat as five characters.
+- modify cheerio's source code: find out the function `getInverse` in the file `./node_modules/cheerio/node_modules/entities/lib/decode.js`, comment out the last line `.replace(re_nonASCII, singleCharReplacer);`.
+
+
 
 
