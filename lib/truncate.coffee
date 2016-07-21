@@ -16,6 +16,14 @@ extend = (obj, dft)->
  * @param  {String}        html    html string to truncate
  * @param  {Object|number} length
  * @param  {Object|null}   options
+ *                         {
+ *                           stripTags: false, // remove all tags, default false
+ *                           ellipsis: '...', // ellipsis sign, default '...'
+ *                           decodeEntities: false, // decode html entities before counting length, default false
+ *                           excludes: '', // elements' selector you want ignore, default none
+ *                           length: 10, // how many letters you want reserve, default none
+ *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replace one space, default false
+ *                         }
  * @return {String}
  * @example
  * truncate('<p>wweeweewewwe</p>', 10)
@@ -35,7 +43,7 @@ truncate = (html, length, options)->
     
   options = extend options, truncate.defaultOptions
 
-  if typeof options.length isnt 'number' or options.length <= 0 then return html
+  if !html or isNaN( options.length ) or options.length <= 0 then return html
 
   if typeof html is 'object'
     html = $(html).html()
@@ -62,34 +70,69 @@ truncate = (html, length, options)->
     else
       return text.substr( 0, options.length ) + options.ellipsis
 
-  len = options.length
+  length = options.length
 
-  travelChildren = ($ele, length)->
+  keepWhitespaces = options.keepWhitespaces
+
+  travelChildren = ($ele)->
     $ele.contents().each ->
       switch this.type
         when 'text'
-          if len <= 0
+          if length <= 0
             $(this).remove()
             return
-          text = $(this).text().replace /\s+/g, ' '
-          if text.length <= len
-            this.data = text
-            len -= text.length
+          text = $(this).text()
+          if keepWhitespaces
+            textLength = 0
+            subLength = 0
+            # count none spaces & spaces
+            # continuous spaces will be treat as one
+            text.replace /(\S*)(\s*)/g, ($0, $1, $2)->
+              console.log $1 + ' ~~~ ' + $2
+              console.log $1.length + ' ~~~ ' + $2.length
+              return if textLength > length
+              if $1.length >= length
+                subLength += length
+                textLength += $1.length
+                length = 0
+                return
+              textLength += $1.length
+              subLength += $1.length
+              length -= $1.length
+
+              $2Len = !!($2.length)
+              if $2Len >= length
+                subLength += $2Len
+                textLength += $2.length
+                length = 0
+                return
+
+              textLength += $2Len
+              subLength += $2.length
+              length -= $2Len
+              return
           else
-            this.data = text.substr(0, len) + options.ellipsis
-            len = 0
+            text = text.replace /\s+/g, ' '
+            textLength = text.length
+            subLength = Math.min textLength, length
+          if textLength <= length
+            this.data = text
+            length -= textLength
+          else
+            this.data = text.substr(0, subLength) + options.ellipsis
+            length = 0
 
         when 'tag'
-          if len <= 0
+          if length <= 0
             $(this).remove()
           else
-            travelChildren $(this), len
+            travelChildren $(this)
 
         # for comments
         else
           $(this).remove()
 
-  travelChildren $html, len
+  travelChildren $html
 
   $html.html()
 
@@ -103,6 +146,10 @@ truncate.defaultOptions =
   # decode html entities
   decodeEntities: false
   # excludes: img
+  # # truncate by words, set to true keep words
+  # # set to number then truncate by word count
+  # words: false
   # length: 0
+  # keepWhitespaces: false
 
 module.exports = truncate

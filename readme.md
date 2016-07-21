@@ -16,6 +16,7 @@ truncate(html, [length], [options])
     ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
     excludes: String or Array, the selectors of the elements you want to ignore
     decodeEntities: Boolean, auto decode html entities in the html string
+    keepWhitespaces: Boolean, keep whitespaces, whether to replace continuous spaces to one space
 }
 ```
 
@@ -24,7 +25,8 @@ truncate(html, [length], [options])
 truncate.defaultOptions = {
   stripTags: false,
   ellipsis: '...',
-  decodeEntities: false
+  decodeEntities: false,
+  keepWhitespaces: false
 };
 ```
 
@@ -51,6 +53,10 @@ var html = '<p><img src="abc.png">This is a string</p> for test.';
 truncate(html, 10, {stripTags: true});
 // returns: This is a ...
 
+// with options, keep whitespaces
+var html = '<p>         <img src="abc.png">This is a string</p> for test.';
+truncate(html, 10, {keepWhitespaces: true});
+// returns: <p>         <img src="abc.png">This is a ...</p>
 
 
 // combine length and options
