@@ -22,7 +22,7 @@ extend = (obj, dft)->
  *                           decodeEntities: false, // decode html entities before counting length, default false
  *                           excludes: '', // elements' selector you want ignore, default none
  *                           length: 10, // how many letters you want reserve, default none
- *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replace one space, default false
+ *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replaced with one space, default false
  *                         }
  * @return {String}
  * @example
@@ -88,8 +88,6 @@ truncate = (html, length, options)->
             # count none spaces & spaces
             # continuous spaces will be treat as one
             text.replace /(\S*)(\s*)/g, ($0, $1, $2)->
-              console.log $1 + ' ~~~ ' + $2
-              console.log $1.length + ' ~~~ ' + $2.length
               return if textLength > length
               if $1.length >= length
                 subLength += length

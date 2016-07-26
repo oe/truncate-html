@@ -16,7 +16,7 @@ truncate(html, [length], [options])
     ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
     excludes: String or Array, the selectors of the elements you want to ignore
     decodeEntities: Boolean, auto decode html entities in the html string
-    keepWhitespaces: Boolean, keep whitespaces, whether to replace continuous spaces to one space
+    keepWhitespaces: Boolean, keep whitespaces, whether to replace continuous spaces with one space
 }
 ```
 
