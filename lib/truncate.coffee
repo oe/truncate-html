@@ -79,7 +79,11 @@ truncate = (html, length, options)->
       switch this.type
         when 'text'
           if length <= 0
-            $(this).remove()
+            if length is 0
+              this.data = options.ellipsis
+              --length
+            else
+              $(this).remove()
             return
           text = $(this).text()
           if keepWhitespaces
@@ -118,11 +122,16 @@ truncate = (html, length, options)->
             length -= textLength
           else
             this.data = text.substr(0, subLength) + options.ellipsis
-            length = 0
+            length = -1
 
         when 'tag'
           if length <= 0
-            $(this).remove()
+            if length is 0
+              this.type = 'text'
+              this.data = options.ellipsis
+              --length
+            else
+              $(this).remove()
           else
             travelChildren $(this)
 
