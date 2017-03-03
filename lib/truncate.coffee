@@ -100,7 +100,7 @@ helper =
  *                           decodeEntities: false, // decode html entities before counting length, default false
  *                           excludes: '', // elements' selector you want ignore, default none
  *                           length: 10, // how many letters you want reserve, default none
- *                           byWords: false, // is true length means how many words to reserve
+ *                           byWords: false, // if true, length means how many words to reserve
  *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replaced with one space, default false
  *                         }
  * @return {String}
