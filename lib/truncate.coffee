@@ -1,14 +1,92 @@
 
 cheerio = require 'cheerio'
 
-# extend obj with dft
-extend = (obj, dft)->
-  if !obj? then obj = {}
+# helper method
+helper =
+  setup: (length, options) ->
+    switch typeof length
+      when 'object'
+        options = length
+      when 'number'
+        if typeof options is 'object'
+          options.length = length
+        else
+          options = length: length
+    options = this.extend options, truncate.defaultOptions
+    if options.excludes
+      unless Array.isArray options.excludes
+        options.excludes = [ options.excludes ]
+      options.excludes = options.excludes.join ','
 
-  for k, v of dft
-    if obj[ k ]? then continue
-    obj[ k ] = v
-  obj
+    this.options = options
+    this.limit = options.length
+    this.ellipsis = options.ellipsis
+    this.keepWhitespaces = options.keepWhitespaces
+
+  # extend obj with dft
+  extend: (obj, dft)->
+    if !obj? then obj = {}
+
+    for k, v of dft
+      if obj[ k ]? then continue
+      obj[ k ] = v
+    obj
+
+  # test a char whether a whitespace char
+  isBlank: (char)->
+    char is ' ' or char is '\f' or char is '\n' or
+    char is '\r' or char is '\t' or char is '\v' or
+    char is '\u00A0' or char is '\u2028' or char is '\u2029'
+
+
+  truncate: (text)->
+    unless this.keepWhitespaces then text = text.replace /\s+/g, ' '
+    if this.options.byWords then this.truncateWords(text) else this.truncateChars(text)
+  # truncate words
+  truncateWords: (str)->
+    strLen = str.length
+    unless this.limit and strLen then return ''
+    index = 0
+    wordCount = 0
+    prevIsBlank = true
+    curIsBlank = false
+    while index < strLen
+      curIsBlank = this.isBlank(str.charAt(index++))
+      # keep same then continue
+      if prevIsBlank is curIsBlank then continue
+      prevIsBlank = curIsBlank
+      if wordCount is this.limit
+        # reserve trailing whitespace
+        if curIsBlank then continue
+        # fix index because current char belong to next words which exceed the limit
+        --index
+        break
+      curIsBlank or ++wordCount
+    this.limit -= wordCount
+    if this.limit then str else str.substr(0, index) + this.ellipsis
+
+  truncateChars: (str)->
+    strLen = str.length
+    unless this.limit and strLen then return ''
+    index = 0
+    charCount = 0
+    prevIsBlank = false
+    curIsBlank = false
+    while index < strLen
+      curIsBlank = this.isBlank(str.charAt(index++))
+
+      if charCount is this.limit
+        # reserve trailing whitespace
+        if curIsBlank then continue
+        # fix index because current char belong to next words which exceed the limit
+        --index
+        break
+      (curIsBlank and prevIsBlank is curIsBlank) or ++charCount
+      prevIsBlank = curIsBlank
+
+    this.limit -= charCount
+    if this.limit then str else str.substr(0, index) + this.ellipsis
+
 
 ###*
  * truncate html
@@ -22,6 +100,7 @@ extend = (obj, dft)->
  *                           decodeEntities: false, // decode html entities before counting length, default false
  *                           excludes: '', // elements' selector you want ignore, default none
  *                           length: 10, // how many letters you want reserve, default none
+ *                           byWords: false, // is true length means how many words to reserve
  *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replaced with one space, default false
  *                         }
  * @return {String}
@@ -31,19 +110,9 @@ extend = (obj, dft)->
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
 ###
 truncate = (html, length, options)->
-  switch typeof length
-    when 'object'
-      options = length
-    when 'number'
-      if typeof options is 'object'
-        options.length = length
-      else
-        options = length: length
-      
-    
-  options = extend options, truncate.defaultOptions
+  helper.setup length, options
 
-  if !html or isNaN( options.length ) or options.length <= 0 then return html
+  if !html or isNaN( helper.limit ) or helper.limit <= 0 then return html
 
   if typeof html is 'object'
     html = $(html).html()
@@ -53,85 +122,29 @@ truncate = (html, length, options)->
   #   <p>Lorem ipsum <span>dolor sit</span> amet, consectetur</p>
   #   tempor incididunt ut labore
   #
-  $ = cheerio.load "<div>#{html}</div>", decodeEntities: options.decodeEntities
+  $ = cheerio.load "<div>#{html}</div>", decodeEntities: helper.options.decodeEntities
   $html = $('div').first()
 
   # remove excludes elements
-  if options.excludes
-    unless Array.isArray options.excludes
-      options.excludes = [ options.excludes ]
-    $html.find( options.excludes.join(',') ).remove()
+  helper.options.excludes and  $html.find( helper.options.excludes ).remove()
 
   # strip tags and get pure text
-  if options.stripTags
-    text = $html.text().replace /\s+/, ' '
-    if text.length <= options.length
-      return text
-    else
-      return text.substr( 0, options.length ) + options.ellipsis
-
-  length = options.length
-
-  keepWhitespaces = options.keepWhitespaces
+  if helper.options.stripTags
+    return helper.truncate $html.text()
 
   travelChildren = ($ele)->
     $ele.contents().each ->
       switch this.type
         when 'text'
-          if length <= 0
-            if length is 0
-              this.data = options.ellipsis
-              --length
-            else
-              $(this).remove()
+          unless helper.limit
+            $(this).remove()
             return
-          text = $(this).text()
-          if keepWhitespaces
-            textLength = 0
-            subLength = 0
-            # count none spaces & spaces
-            # continuous spaces will be treat as one
-            text.replace /(\S*)(\s*)/g, ($0, $1, $2)->
-              return if textLength > length
-              if $1.length >= length
-                subLength += length
-                textLength += $1.length
-                length = 0
-                return
-              textLength += $1.length
-              subLength += $1.length
-              length -= $1.length
-
-              $2Len = !!($2.length)
-              if $2Len >= length
-                subLength += $2Len
-                textLength += $2.length
-                length = 0
-                return
-
-              textLength += $2Len
-              subLength += $2.length
-              length -= $2Len
-              return
-          else
-            text = text.replace /\s+/g, ' '
-            textLength = text.length
-            subLength = Math.min textLength, length
-          if textLength <= length
-            this.data = text
-            length -= textLength
-          else
-            this.data = text.substr(0, subLength) + options.ellipsis
-            length = -1
+          this.data = helper.truncate $(this).text()
 
         when 'tag'
-          if length <= 0
-            if length is 0
-              this.type = 'text'
-              this.data = options.ellipsis
-              --length
-            else
-              $(this).remove()
+          unless helper.limit
+            $(this).remove()
+            return
           else
             travelChildren $(this)
 
@@ -152,6 +165,8 @@ truncate.defaultOptions =
   ellipsis: '...'
   # decode html entities
   decodeEntities: false
+  # whether truncate by words
+  byWords: false
   # excludes: img
   # # truncate by words, set to true keep words
   # # set to number then truncate by word count

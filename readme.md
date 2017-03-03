@@ -12,6 +12,7 @@ truncate(html, [length], [options])
 ```
 {
     length: Number, content length to truncate
+    byWords: Boolean, whether truncate by words, aka `length` means words count
     stripTags: Boolean, whether to remove tags
     ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
     excludes: String or Array, the selectors of the elements you want to ignore
@@ -23,6 +24,7 @@ truncate(html, [length], [options])
 ### Default options
 ```js
 truncate.defaultOptions = {
+  byWords: false,
   stripTags: false,
   ellipsis: '...',
   decodeEntities: false,
@@ -52,6 +54,15 @@ truncate(html, 10);
 var html = '<p><img src="abc.png">This is a string</p> for test.';
 truncate(html, 10, {stripTags: true});
 // returns: This is a ...
+
+
+// with options, truncate by words. 
+//  if you try to truncate none alphabet language(like CJK)
+//      it will not act as you wish
+var html = '<p><img src="abc.png">This is a string</p> for test.';
+truncate(html, 3, {byWords: true});
+// returns: <p><img src="abc.png">This is a ...</p>
+
 
 // with options, keep whitespaces
 var html = '<p>         <img src="abc.png">This is a string</p> for test.';
