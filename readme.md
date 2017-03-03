@@ -1,5 +1,5 @@
 # Truncate-html
-Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements.
+Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words.
 
 **Notice** This is a node module depends on cheerio *can only run on nodejs*. If you need a browser version, you may consider [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
 
