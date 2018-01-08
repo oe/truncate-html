@@ -81,12 +81,24 @@ helper =
         # fix index because current char belong to next words which exceed the limit
         --index
         break
-      (curIsBlank and prevIsBlank is curIsBlank) or ++charCount
+      (curIsBlank and prevIsBlank) or ++charCount
       prevIsBlank = curIsBlank
 
     this.limit -= charCount
-    if this.limit then str else str.substr(0, index) + this.ellipsis
+    if this.limit then str else this.substr(str, index) + this.ellipsis
 
+  substr: (str, len) ->
+    cutted = str.substr 0, len
+    unless this.keepWords then return cutted
+    boundary = str.substring len - 1, len + 1
+    # if truncate at word boundary, just return
+    if /^(\w\W|\W\w|\W\W)$/.test(boundary) then return cutted
+    if this.keepWords < 0
+      result = cutted.replace /\w+$/, ''
+      # if the cutted is not the first and the only word
+      #   then return result, or return the whole word
+      unless result.length is 0 and cutted.length is this.options.length then return result
+    cutted + str.substr(len).match(/(\w+)/)[1]
 
 ###*
  * truncate html
@@ -101,6 +113,7 @@ helper =
  *                           excludes: '', // elements' selector you want ignore, default none
  *                           length: 10, // how many letters you want reserve, default none
  *                           byWords: false, // if true, length means how many words to reserve
+ *                           keepWords: false, //
  *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replaced with one space, default false
  *                         }
  * @return {String}
@@ -172,6 +185,7 @@ truncate.defaultOptions =
   # # set to number then truncate by word count
   # words: false
   # length: 0
+  # keepWords: false,
   # keepWhitespaces: false
 
 module.exports = truncate
