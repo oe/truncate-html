@@ -92,7 +92,7 @@ helper =
     unless this.keepWords then return cutted
     boundary = str.substring len - 1, len + 1
     # if truncate at word boundary, just return
-    if /^(\w\W|\W\w|\W\W)$/.test(boundary) then return cutted
+    if /\W/.test(boundary) then return cutted
     if this.keepWords < 0
       result = cutted.replace /\w+$/, ''
       # if the cutted is not the first and the only word

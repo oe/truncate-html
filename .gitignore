@@ -1,6 +1,5 @@
 config.codekit
 validate.js
 test.coffee
-config.codekit3
 lib/test.js
 lib/truncate-old.coffee
