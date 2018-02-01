@@ -1,7 +1,9 @@
-let cheerio = require('cheerio');
+'use strict';
+
+var cheerio = require('cheerio');
 
 // default options
-const defaultOptions = {
+var defaultOptions = {
     // remove all tags
     stripTags: false,
     // postfix of the string
@@ -20,7 +22,7 @@ const defaultOptions = {
 // keepWhitespaces: false
 
 // helper method
-const helper = {
+var helper = {
     setup: function(length, options) {
         switch (typeof length) {
             case 'object':
@@ -78,6 +80,8 @@ const helper = {
     },
     // truncate words
     truncateWords: function(str) {
+        var this$1 = this;
+
         var curIsBlank, index, prevIsBlank, strLen, wordCount;
         strLen = str.length;
         if (!(this.limit && strLen)) {
@@ -88,13 +92,13 @@ const helper = {
         prevIsBlank = true;
         curIsBlank = false;
         while (index < strLen) {
-            curIsBlank = this.isBlank(str.charAt(index++));
+            curIsBlank = this$1.isBlank(str.charAt(index++));
             // keep same then continue
             if (prevIsBlank === curIsBlank) {
                 continue;
             }
             prevIsBlank = curIsBlank;
-            if (wordCount === this.limit) {
+            if (wordCount === this$1.limit) {
                 // reserve trailing whitespace
                 if (curIsBlank) {
                     continue;
@@ -113,6 +117,8 @@ const helper = {
         }
     },
     truncateChars: function(str) {
+        var this$1 = this;
+
         var charCount, curIsBlank, index, prevIsBlank, strLen;
         strLen = str.length;
         if (!(this.limit && strLen)) {
@@ -123,8 +129,8 @@ const helper = {
         prevIsBlank = false;
         curIsBlank = false;
         while (index < strLen) {
-            curIsBlank = this.isBlank(str.charAt(index++));
-            if (charCount === this.limit) {
+            curIsBlank = this$1.isBlank(str.charAt(index++));
+            if (charCount === this$1.limit) {
                 // reserve trailing whitespace
                 if (curIsBlank) {
                     continue;
@@ -188,7 +194,7 @@ const helper = {
  * truncate('<p>wweeweewewwe</p>', 10, {stripTags: true})
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
-export default function Truncate(html, length, options) {
+function Truncate(html, length, options) {
     var $, $html, travelChildren;
     helper.setup(length, options);
     if (!html || isNaN(helper.limit) || helper.limit <= 0) {
@@ -202,7 +208,7 @@ export default function Truncate(html, length, options) {
     //   <p>Lorem ipsum <span>dolor sit</span> amet, consectetur</p>
     //   tempor incididunt ut labore
 
-    $ = cheerio.load(`<div>${html}</div>`, {
+    $ = cheerio.load(("<div>" + html + "</div>"), {
         decodeEntities: helper.options.decodeEntities
     });
     $html = $('div').first();
@@ -236,4 +242,6 @@ export default function Truncate(html, length, options) {
     };
     travelChildren($html);
     return $html.html();
-};
+}
+
+module.exports = Truncate;

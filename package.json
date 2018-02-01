@@ -1,43 +1,38 @@
 {
-  "name": "truncate-html",
-  "version": "0.1.4",
-  "description": "truncate html and keep tags in safe",
-  "main": "lib/truncate.js",
-  "scripts": {
-    "start": "webpack-dev-server --config ./webpack.base.config.js --inline --progress",
-    "build": "webpack --config webpack.base.config.js",
-    "test": "jest --coverage",
-    "test:server": "jest --coverage --watchAll"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://evecalm@github.com/evecalm/truncate-html.git"
-  },
-  "keywords": [
-    "truncate html",
-    "html",
-    "truncate"
-  ],
-  "author": "Saiya",
-  "license": "MIT",
-  "dependencies": {
-    "cheerio": "0.22.0"
-  },
-  "bugs": {
-    "url": "https://github.com/evecalm/truncate-html/issues"
-  },
-  "homepage": "https://github.com/evecalm/truncate-html#readme",
-  "devDependencies": {
-    "babel-core": "6.26.0",
-    "babel-loader": "7.1.2",
-    "babel-preset-env": "1.6.1",
-    "copy-webpack-plugin": "4.2.0",
-    "dotenv": "4.0.0",
-    "jest": "22.1.4",
-    "uglifyjs-webpack-plugin": "1.1.8",
-    "webpack": "3.10.0",
-    "webpack-bundle-analyzer": "2.9.2",
-    "webpack-dashboard": "1.0.2",
-    "webpack-dev-server": "2.9.4"
-  }
+    "name": "truncate-html",
+    "version": "0.1.4",
+    "description": "truncate html and keep tags in safe",
+    "main": "dist/truncate.cjs.js",
+    "module": "dist/truncate.es.js",
+    "scripts": {
+        "start": "npm run build && npm run test",
+        "build": "rollup -c --environment format:cjs && rollup -c --environment format:es",
+        "test": "jest --coverage",
+        "prepublish": "npm start"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://evecalm@github.com/evecalm/truncate-html.git"
+    },
+    "keywords": [
+        "truncate html",
+        "html",
+        "truncate"
+    ],
+    "author": "Saiya",
+    "license": "MIT",
+    "dependencies": {
+        "cheerio": "0.22.0"
+    },
+    "bugs": {
+        "url": "https://github.com/evecalm/truncate-html/issues"
+    },
+    "homepage": "https://github.com/evecalm/truncate-html#readme",
+    "devDependencies": {
+        "babel-core": "6.26.0",
+        "buble": "0.18.0",
+        "jest": "22.1.4",
+        "rollup": "0.55.3",
+        "rollup-plugin-buble": "0.18.0"
+    }
 }
