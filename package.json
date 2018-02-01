@@ -4,7 +4,10 @@
   "description": "truncate html and keep tags in safe",
   "main": "lib/truncate.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack-dev-server --config ./webpack.base.config.js --inline --progress",
+    "build": "webpack --config webpack.base.config.js",
+    "test": "jest --coverage",
+    "test:server": "jest --coverage --watchAll"
   },
   "repository": {
     "type": "git",
@@ -25,7 +28,16 @@
   },
   "homepage": "https://github.com/evecalm/truncate-html#readme",
   "devDependencies": {
-    "chai": "^4.1.2",
-    "mocha": "^5.0.0"
+    "babel-core": "6.26.0",
+    "babel-loader": "7.1.2",
+    "babel-preset-env": "1.6.1",
+    "copy-webpack-plugin": "4.2.0",
+    "dotenv": "4.0.0",
+    "jest": "22.1.4",
+    "uglifyjs-webpack-plugin": "1.1.8",
+    "webpack": "3.10.0",
+    "webpack-bundle-analyzer": "2.9.2",
+    "webpack-dashboard": "1.0.2",
+    "webpack-dev-server": "2.9.4"
   }
 }
