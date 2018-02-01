@@ -35,17 +35,17 @@ const helper = {
           };
         }
     }
-    options = helper.extend(options, defaultOptions);
+    options = this.extend(options, defaultOptions);
     if (options.excludes) {
       if (!Array.isArray(options.excludes)) {
         options.excludes = [options.excludes];
       }
       options.excludes = options.excludes.join(',');
     }
-    helper.options = options;
-    helper.limit = options.length;
-    helper.ellipsis = options.ellipsis;
-    return helper.keepWhitespaces = options.keepWhitespaces;
+    this.options = options;
+    this.limit = options.length;
+    this.ellipsis = options.ellipsis;
+    return this.keepWhitespaces = options.keepWhitespaces;
   },
   // extend obj with dft
   extend: function(obj, dft) {
