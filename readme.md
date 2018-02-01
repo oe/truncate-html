@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/calebeno/truncate-html.svg?branch=master)](https://travis-ci.org/calebeno/truncate-html)
+[![Build Status](https://travis-ci.org/evecalm/truncate-html.svg?branch=master)](https://travis-ci.org/evecalm/truncate-html)
 
 # Truncate-html
 Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words.
