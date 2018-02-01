@@ -68,7 +68,8 @@ describe('Truncate', () => {
         let expected = '<p><img src="abc.png">This is a ...</p>';
         let options = {
             byWords: true
-        }
+        };
+
         expect(truncate(html, 3, options)).toBe(expected);
     });
 
@@ -77,7 +78,7 @@ describe('Truncate', () => {
         let expected = '<p>         <img src="abc.png">This is a ...</p>';
         let options = {
             keepWhitespaces: true
-        }
+        };
 
         expect(truncate(html, 10, options)).toBe(expected);
     });
@@ -110,7 +111,7 @@ describe('Truncate', () => {
         let options = {
             length: 10,
             excludes: 'img'
-        }
+        };
 
         expect(truncate(html, options)).toBe(expected);
     });
@@ -121,7 +122,7 @@ describe('Truncate', () => {
         let options = {
             length: 20,
             excludes: ['img', '.something-unwanted']
-        }
+        };
 
         expect(truncate(html, options)).toBe(expected);
     });
@@ -132,7 +133,7 @@ describe('Truncate', () => {
         let options = {
             length: 20,
             decodeEntities: true
-        }
+        };
 
         expect(truncate(html, options)).toBe(expected);
     });
@@ -143,7 +144,7 @@ describe('Truncate', () => {
         let options = {
             length: 20,
             decodeEntities: false // this is the default value
-        }
+        };
 
         expect(truncate(html, options)).toBe(expected);
     });
@@ -154,7 +155,7 @@ describe('Truncate', () => {
         let options = {
             length: 20,
             decodeEntities: true
-        }
+        };
 
         expect(truncate(html, options)).toBe(expected);
     });
