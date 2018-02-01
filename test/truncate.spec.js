@@ -1,4 +1,4 @@
-let truncate = require('../dist/truncate.cjs.js');
+import {truncate} from '../dist/truncate.es';
 
 describe('Truncate', () => {
     it('should', () => {

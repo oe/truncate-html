@@ -188,7 +188,7 @@ const helper = {
  * truncate('<p>wweeweewewwe</p>', 10, {stripTags: true})
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
-export default function Truncate(html, length, options) {
+export function truncate(html, length, options) {
     var $, $html, travelChildren;
     helper.setup(length, options);
     if (!html || isNaN(helper.limit) || helper.limit <= 0) {
