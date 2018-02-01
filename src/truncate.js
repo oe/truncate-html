@@ -197,11 +197,9 @@ export function truncate(html, length, options) {
   if (typeof html === 'object') {
     html = $(html).html();
   }
-  // add a wrapper for text node without tag like:
 
-  //   <p>Lorem ipsum <span>dolor sit</span> amet, consectetur</p>
-  //   tempor incididunt ut labore
-
+  // Add a wrapper for text node without tag like:
+  //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
   $ = cheerio.load(`<div>${html}</div>`, {
     decodeEntities: helper.options.decodeEntities
   });

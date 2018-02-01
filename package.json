@@ -5,9 +5,10 @@
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
   "scripts": {
-    "start": "npm run build && npm run test",
+    "start": "npm run test && npm run build",
     "build": "rollup -c --environment format:cjs && rollup -c --environment format:es",
     "test": "jest --coverage",
+    "test:server": "jest --coverage --watch",
     "prepare": "npm start"
   },
   "repository": {
@@ -30,7 +31,7 @@
   "homepage": "https://github.com/evecalm/truncate-html#readme",
   "devDependencies": {
     "babel-core": "6.26.0",
-    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-es2015": "6.24.1",
     "buble": "0.18.0",
     "jest": "22.1.4",
     "rollup": "0.55.3",
