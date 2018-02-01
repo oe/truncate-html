@@ -3,3 +3,4 @@ validate.js
 test.coffee
 lib/test.js
 lib/truncate-old.coffee
+node_modules
