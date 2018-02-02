@@ -6,7 +6,8 @@
   "module": "dist/truncate.es.js",
   "scripts": {
     "start": "npm run build",
-    "build": "npm run lint && npm run test && rollup -c --environment format:cjs && rollup -c --environment format:es",
+    "build": "npm run lint && npm run test && npm run build:dir",
+    "build:dir": "rollup -c --environment format:cjs && rollup -c --environment format:es",
     "test": "jest --coverage",
     "test:server": "jest --coverage --watch",
     "lint": "eslint --ext .js -f ./node_modules/eslint-friendly-formatter --fix src",

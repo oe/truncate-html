@@ -63,7 +63,7 @@ describe('Truncate', () => {
   })
 
   it('should truncate by words', () => {
-    let html = '<p><img src="abc.png">This is a string</p> for test.'
+    let html = '<p><img src="abc.png">This is a string do</p> for test.'
     let expected = '<p><img src="abc.png">This is a ...</p>'
     let options = {
       byWords: true

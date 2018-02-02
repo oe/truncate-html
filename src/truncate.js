@@ -48,7 +48,7 @@ const helper = {
   },
   // extend obj with dft
   extend (obj, dft) {
-    var k, v
+    let k, v
     if (obj == null) {
       obj = {}
     }
@@ -69,101 +69,64 @@ const helper = {
     if (!this.keepWhitespaces) {
       text = text.replace(/\s+/g, ' ')
     }
-    if (this.options.byWords) {
-      return this.truncateWords(text)
-    } else {
-      return this.truncateChars(text)
-    }
-  },
-  // truncate words
-  truncateWords (str) {
-    var curIsBlank, index, prevIsBlank, strLen, wordCount
-    strLen = str.length
+    const byWords = this.options.byWords
+    const strLen = text.length
     if (!(this.limit && strLen)) {
       return ''
     }
-    index = 0
-    wordCount = 0
-    prevIsBlank = true
-    curIsBlank = false
-    while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++))
+    let idx = 0
+    let count = 0
+    let prevIsBlank = byWords
+    let curIsBlank = false
+    while (idx < strLen) {
+      curIsBlank = this.isBlank(text.charAt(idx++))
+      if (count === this.limit) {
+        // reserve trailing whitespace
+        if (curIsBlank) {
+          continue
+        }
+        // fix idx because current char belong to next words which exceed the limit
+        --idx
+        break
+      }
       // keep same then continue
-      if (prevIsBlank === curIsBlank) {
-        continue
+      if (byWords && (prevIsBlank === curIsBlank)) continue
+      if (byWords) {
+        curIsBlank || ++count
+      } else {
+        (curIsBlank && prevIsBlank) || ++count
       }
       prevIsBlank = curIsBlank
-      if (wordCount === this.limit) {
-        // reserve trailing whitespace
-        if (curIsBlank) {
-          continue
-        }
-        // fix index because current char belong to next words which exceed the limit
-        --index
-        break
-      }
-      curIsBlank || ++wordCount
     }
-    this.limit -= wordCount
+    this.limit -= count
     if (this.limit) {
-      return str
+      return text
     } else {
-      return str.substr(0, index) + this.ellipsis
-    }
-  },
-  truncateChars (str) {
-    var charCount, curIsBlank, index, prevIsBlank, strLen
-    strLen = str.length
-    if (!(this.limit && strLen)) {
-      return ''
-    }
-    index = 0
-    charCount = 0
-    prevIsBlank = false
-    curIsBlank = false
-    while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++))
-      if (charCount === this.limit) {
-        // reserve trailing whitespace
-        if (curIsBlank) {
-          continue
-        }
-        // fix index because current char belong to next words which exceed the limit
-        --index
-        break
-      }
-      (curIsBlank && prevIsBlank) || ++charCount
-      prevIsBlank = curIsBlank
-    }
-    this.limit -= charCount
-    if (this.limit) {
-      return str
-    } else {
-      return this.substr(str, index) + this.ellipsis
+      return text.substr(0, idx) + this.ellipsis
     }
   },
   // deal with cut string in the middle of a word
   substr (str, len) {
-    var boundary, cutted, result
-    cutted = str.substr(0, len)
+    // var boundary, cutted, result
+    const cutted = str.substr(0, len)
     if (!this.keepWords) {
       return cutted
     }
-    boundary = str.substring(len - 1, len + 1)
+    const boundary = str.substring(len - 1, len + 1)
     // if truncate at word boundary, just return
     if (/\W/.test(boundary)) {
       return cutted
     }
     if (this.keepWords < 0) {
-      result = cutted.replace(/\w+$/, '')
+      let result = cutted.replace(/\w+$/, '')
       // if the cutted is not the first and the only word
       //   then return result, or return the whole word
       if (!(result.length === 0 && cutted.length === this.options.length)) {
         return result
       }
     }
-    //
-    const maxExceeded = this.keepWords === true ? 10 : this.keepWords
+    // set max exceeded to 10 if this.keepWords is true or > 0
+    const maxExceeded = this.keepWords !== true && this.keepWords > 0 ? this.keepWords : 10
     const exceeded = str.substr(len).match(/(\w+)/)[1]
     return cutted + exceeded.substr(0, maxExceeded)
   }
@@ -192,28 +155,27 @@ const helper = {
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
 export default function truncate (html, length, options) {
-  var $, $html, travelChildren
   helper.setup(length, options)
   if (!html || isNaN(helper.limit) || helper.limit <= 0) {
     return html
   }
   if (typeof html === 'object') {
-    html = $(html).html()
+    html = cheerio(html).html()
   }
 
   // Add a wrapper for text node without tag like:
   //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
-  $ = cheerio.load(`<div>${html}</div>`, {
+  const $ = cheerio.load(`<div>${html}</div>`, {
     decodeEntities: helper.options.decodeEntities
   })
-  $html = $('div').first()
+  const $html = $('div').first()
   // remove excludes elements
   helper.options.excludes && $html.find(helper.options.excludes).remove()
   // strip tags and get pure text
   if (helper.options.stripTags) {
     return helper.truncate($html.text())
   }
-  travelChildren = function ($ele) {
+  const travelChildren = function ($ele) {
     return $ele.contents().each(function () {
       switch (this.type) {
         case 'text':
