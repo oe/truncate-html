@@ -1,6 +1,6 @@
 {
   "name": "truncate-html-ceno2",
-  "version": "0.2.3",
+  "version": "0.2.5",
   "dependencies": {
     "@babel/code-frame": {
       "version": "7.0.0-beta.36",
