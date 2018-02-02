@@ -1,9 +1,26 @@
-var cheerio, helper, truncate;
+var cheerio = require('cheerio');
 
-cheerio = require('cheerio');
+// default options
+var defaultOptions = {
+  // remove all tags
+  stripTags: false,
+  // postfix of the string
+  ellipsis: '...',
+  // decode html entities
+  decodeEntities: false,
+  // whether truncate by words
+  byWords: false
+};
+// excludes: img
+// # truncate by words, set to true keep words
+// # set to number then truncate by word count
+// words: false
+// length: 0
+// keepWords: false,
+// keepWhitespaces: false
 
 // helper method
-helper = {
+var helper = {
   setup: function(length, options) {
     switch (typeof length) {
       case 'object':
@@ -18,7 +35,7 @@ helper = {
           };
         }
     }
-    options = this.extend(options, truncate.defaultOptions);
+    options = this.extend(options, defaultOptions);
     if (options.excludes) {
       if (!Array.isArray(options.excludes)) {
         options.excludes = [options.excludes];
@@ -61,6 +78,8 @@ helper = {
   },
   // truncate words
   truncateWords: function(str) {
+    var this$1 = this;
+
     var curIsBlank, index, prevIsBlank, strLen, wordCount;
     strLen = str.length;
     if (!(this.limit && strLen)) {
@@ -71,13 +90,13 @@ helper = {
     prevIsBlank = true;
     curIsBlank = false;
     while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++));
+      curIsBlank = this$1.isBlank(str.charAt(index++));
       // keep same then continue
       if (prevIsBlank === curIsBlank) {
         continue;
       }
       prevIsBlank = curIsBlank;
-      if (wordCount === this.limit) {
+      if (wordCount === this$1.limit) {
         // reserve trailing whitespace
         if (curIsBlank) {
           continue;
@@ -96,6 +115,8 @@ helper = {
     }
   },
   truncateChars: function(str) {
+    var this$1 = this;
+
     var charCount, curIsBlank, index, prevIsBlank, strLen;
     strLen = str.length;
     if (!(this.limit && strLen)) {
@@ -106,8 +127,8 @@ helper = {
     prevIsBlank = false;
     curIsBlank = false;
     while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++));
-      if (charCount === this.limit) {
+      curIsBlank = this$1.isBlank(str.charAt(index++));
+      if (charCount === this$1.limit) {
         // reserve trailing whitespace
         if (curIsBlank) {
           continue;
@@ -171,7 +192,7 @@ helper = {
  * truncate('<p>wweeweewewwe</p>', 10, {stripTags: true})
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
-truncate = function(html, length, options) {
+function truncate(html, length, options) {
   var $, $html, travelChildren;
   helper.setup(length, options);
   if (!html || isNaN(helper.limit) || helper.limit <= 0) {
@@ -180,12 +201,10 @@ truncate = function(html, length, options) {
   if (typeof html === 'object') {
     html = $(html).html();
   }
-  // add a wrapper for text node without tag like:
 
-  //   <p>Lorem ipsum <span>dolor sit</span> amet, consectetur</p>
-  //   tempor incididunt ut labore
-
-  $ = cheerio.load(`<div>${html}</div>`, {
+  // Add a wrapper for text node without tag like:
+  //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
+  $ = cheerio.load(("<div>" + html + "</div>"), {
     decodeEntities: helper.options.decodeEntities
   });
   $html = $('div').first();
@@ -219,25 +238,6 @@ truncate = function(html, length, options) {
   };
   travelChildren($html);
   return $html.html();
-};
+}
 
-// default options
-truncate.defaultOptions = {
-  // remove all tags
-  stripTags: false,
-  // postfix of the string
-  ellipsis: '...',
-  // decode html entities
-  decodeEntities: false,
-  // whether truncate by words
-  byWords: false
-};
-
-// excludes: img
-// # truncate by words, set to true keep words
-// # set to number then truncate by word count
-// words: false
-// length: 0
-// keepWords: false,
-// keepWhitespaces: false
-module.exports = truncate;
+export { truncate };
