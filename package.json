@@ -1,6 +1,6 @@
 {
   "name": "truncate-html-ceno2",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
@@ -48,6 +48,7 @@
     "rollup-plugin-buble": "0.18.0"
   },
   "files": [
-    "dist"
+    "dist",
+    "npm-shrinkwrap.json"
   ]
 }
