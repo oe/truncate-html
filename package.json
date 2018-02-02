@@ -1,6 +1,6 @@
 {
-  "name": "truncate-html-ceno2",
-  "version": "0.2.7",
+  "name": "truncate-html",
+  "version": "0.2.0",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
