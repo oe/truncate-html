@@ -46,5 +46,8 @@
     "jest": "22.1.4",
     "rollup": "0.55.3",
     "rollup-plugin-buble": "0.18.0"
-  }
+  },
+  "files": [
+    "dist"
+  ]
 }
