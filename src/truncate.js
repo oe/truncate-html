@@ -1,4 +1,4 @@
-let cheerio = require('cheerio');
+const cheerio = require('cheerio')
 
 // default options
 const defaultOptions = {
@@ -10,161 +10,164 @@ const defaultOptions = {
   decodeEntities: false,
   // whether truncate by words
   byWords: false
-};
-// excludes: img
-// # truncate by words, set to true keep words
-// # set to number then truncate by word count
-// words: false
-// length: 0
-// keepWords: false,
-// keepWhitespaces: false
+  // // truncate by words, set to true keep words
+  // // set to number then truncate by word count
+  // length: 0
+  // excludes: '', // remove tags
+  // keepWords: false, // keep word completed if truncate at the middle of the word, works no matter byWords is true/false
+  // keepWhitespaces: false // even if set true, continuous whitespace will count as one
+}
 
 // helper method
 const helper = {
-  setup: function(length, options) {
+  setup (length, options) {
     switch (typeof length) {
       case 'object':
-        options = length;
-        break;
+        options = length
+        break
       case 'number':
         if (typeof options === 'object') {
-          options.length = length;
+          options.length = length
         } else {
           options = {
             length: length
-          };
+          }
         }
     }
-    options = this.extend(options, defaultOptions);
+    options = this.extend(options, defaultOptions)
     if (options.excludes) {
       if (!Array.isArray(options.excludes)) {
-        options.excludes = [options.excludes];
+        options.excludes = [options.excludes]
       }
-      options.excludes = options.excludes.join(',');
+      options.excludes = options.excludes.join(',')
     }
-    this.options = options;
-    this.limit = options.length;
-    this.ellipsis = options.ellipsis;
-    return this.keepWhitespaces = options.keepWhitespaces;
+    this.options = options
+    this.limit = options.length
+    this.ellipsis = options.ellipsis
+    this.keepWhitespaces = options.keepWhitespaces
   },
   // extend obj with dft
-  extend: function(obj, dft) {
-    var k, v;
+  extend (obj, dft) {
+    var k, v
     if (obj == null) {
-      obj = {};
+      obj = {}
     }
     for (k in dft) {
-      v = dft[k];
+      v = dft[k]
       if (obj[k] != null) {
-        continue;
+        continue
       }
-      obj[k] = v;
+      obj[k] = v
     }
-    return obj;
+    return obj
   },
   // test a char whether a whitespace char
-  isBlank: function(char) {
-    return char === ' ' || char === '\f' || char === '\n' || char === '\r' || char === '\t' || char === '\v' || char === '\u00A0' || char === '\u2028' || char === '\u2029';
+  isBlank (char) {
+    return char === ' ' || char === '\f' || char === '\n' || char === '\r' || char === '\t' || char === '\v' || char === '\u00A0' || char === '\u2028' || char === '\u2029'
   },
-  truncate: function(text) {
+  truncate (text) {
     if (!this.keepWhitespaces) {
-      text = text.replace(/\s+/g, ' ');
+      text = text.replace(/\s+/g, ' ')
     }
     if (this.options.byWords) {
-      return this.truncateWords(text);
+      return this.truncateWords(text)
     } else {
-      return this.truncateChars(text);
+      return this.truncateChars(text)
     }
   },
   // truncate words
-  truncateWords: function(str) {
-    var curIsBlank, index, prevIsBlank, strLen, wordCount;
-    strLen = str.length;
+  truncateWords (str) {
+    var curIsBlank, index, prevIsBlank, strLen, wordCount
+    strLen = str.length
     if (!(this.limit && strLen)) {
-      return '';
+      return ''
     }
-    index = 0;
-    wordCount = 0;
-    prevIsBlank = true;
-    curIsBlank = false;
+    index = 0
+    wordCount = 0
+    prevIsBlank = true
+    curIsBlank = false
     while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++));
+      curIsBlank = this.isBlank(str.charAt(index++))
       // keep same then continue
       if (prevIsBlank === curIsBlank) {
-        continue;
+        continue
       }
-      prevIsBlank = curIsBlank;
+      prevIsBlank = curIsBlank
       if (wordCount === this.limit) {
         // reserve trailing whitespace
         if (curIsBlank) {
-          continue;
+          continue
         }
         // fix index because current char belong to next words which exceed the limit
-        --index;
-        break;
+        --index
+        break
       }
-      curIsBlank || ++wordCount;
+      curIsBlank || ++wordCount
     }
-    this.limit -= wordCount;
+    this.limit -= wordCount
     if (this.limit) {
-      return str;
+      return str
     } else {
-      return str.substr(0, index) + this.ellipsis;
+      return str.substr(0, index) + this.ellipsis
     }
   },
-  truncateChars: function(str) {
-    var charCount, curIsBlank, index, prevIsBlank, strLen;
-    strLen = str.length;
+  truncateChars (str) {
+    var charCount, curIsBlank, index, prevIsBlank, strLen
+    strLen = str.length
     if (!(this.limit && strLen)) {
-      return '';
+      return ''
     }
-    index = 0;
-    charCount = 0;
-    prevIsBlank = false;
-    curIsBlank = false;
+    index = 0
+    charCount = 0
+    prevIsBlank = false
+    curIsBlank = false
     while (index < strLen) {
-      curIsBlank = this.isBlank(str.charAt(index++));
+      curIsBlank = this.isBlank(str.charAt(index++))
       if (charCount === this.limit) {
         // reserve trailing whitespace
         if (curIsBlank) {
-          continue;
+          continue
         }
         // fix index because current char belong to next words which exceed the limit
-        --index;
-        break;
+        --index
+        break
       }
-      (curIsBlank && prevIsBlank) || ++charCount;
-      prevIsBlank = curIsBlank;
+      (curIsBlank && prevIsBlank) || ++charCount
+      prevIsBlank = curIsBlank
     }
-    this.limit -= charCount;
+    this.limit -= charCount
     if (this.limit) {
-      return str;
+      return str
     } else {
-      return this.substr(str, index) + this.ellipsis;
+      return this.substr(str, index) + this.ellipsis
     }
   },
-  substr: function(str, len) {
-    var boundary, cutted, result;
-    cutted = str.substr(0, len);
+  // deal with cut string in the middle of a word
+  substr (str, len) {
+    var boundary, cutted, result
+    cutted = str.substr(0, len)
     if (!this.keepWords) {
-      return cutted;
+      return cutted
     }
-    boundary = str.substring(len - 1, len + 1);
+    boundary = str.substring(len - 1, len + 1)
     // if truncate at word boundary, just return
     if (/\W/.test(boundary)) {
-      return cutted;
+      return cutted
     }
     if (this.keepWords < 0) {
-      result = cutted.replace(/\w+$/, '');
+      result = cutted.replace(/\w+$/, '')
       // if the cutted is not the first and the only word
       //   then return result, or return the whole word
       if (!(result.length === 0 && cutted.length === this.options.length)) {
-        return result;
+        return result
       }
     }
-    return cutted + str.substr(len).match(/(\w+)/)[1];
+    //
+    const maxExceeded = this.keepWords === true ? 10 : this.keepWords
+    const exceeded = str.substr(len).match(/(\w+)/)[1]
+    return cutted + exceeded.substr(0, maxExceeded)
   }
-};
+}
 
 /**
  * truncate html
@@ -188,50 +191,55 @@ const helper = {
  * truncate('<p>wweeweewewwe</p>', 10, {stripTags: true})
  * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
-export function truncate(html, length, options) {
-  var $, $html, travelChildren;
-  helper.setup(length, options);
+export default function truncate (html, length, options) {
+  var $, $html, travelChildren
+  helper.setup(length, options)
   if (!html || isNaN(helper.limit) || helper.limit <= 0) {
-    return html;
+    return html
   }
   if (typeof html === 'object') {
-    html = $(html).html();
+    html = $(html).html()
   }
 
   // Add a wrapper for text node without tag like:
   //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
   $ = cheerio.load(`<div>${html}</div>`, {
     decodeEntities: helper.options.decodeEntities
-  });
-  $html = $('div').first();
+  })
+  $html = $('div').first()
   // remove excludes elements
-  helper.options.excludes && $html.find(helper.options.excludes).remove();
+  helper.options.excludes && $html.find(helper.options.excludes).remove()
   // strip tags and get pure text
   if (helper.options.stripTags) {
-    return helper.truncate($html.text());
+    return helper.truncate($html.text())
   }
-  travelChildren = function($ele) {
-    return $ele.contents().each(function() {
+  travelChildren = function ($ele) {
+    return $ele.contents().each(function () {
       switch (this.type) {
         case 'text':
           if (!helper.limit) {
-            $(this).remove();
-            return;
+            $(this).remove()
+            return
           }
-          return this.data = helper.truncate($(this).text());
+          this.data = helper.truncate($(this).text())
+          break
         case 'tag':
           if (!helper.limit) {
-            $(this).remove();
+            $(this).remove()
           } else {
-            return travelChildren($(this));
+            return travelChildren($(this))
           }
-          break;
+          break
         default:
           // for comments
-          return $(this).remove();
+          return $(this).remove()
       }
-    });
-  };
-  travelChildren($html);
-  return $html.html();
-};
+    })
+  }
+  travelChildren($html)
+  return $html.html()
+}
+
+truncate.setup = (options = {}) => {
+  helper.extend(defaultOptions, options)
+}
