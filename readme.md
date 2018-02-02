@@ -1,7 +1,18 @@
-[![Build Status](https://travis-ci.org/evecalm/truncate-html.svg?branch=master)](https://travis-ci.org/evecalm/truncate-html)
 
-# Truncate-html
-Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words.
+<h1 align="center">Truncate-html</h1>
+
+<h5 align="center"> Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
+<div align="center">
+  <a href="https://travis-ci.org/evecalm/truncate-html">
+    <img src="https://travis-ci.org/evecalm/truncate-html.svg?branch=master" alt="Travis CI">
+  </a>
+  <a href="#readme">
+    <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version" height="18">
+  </a>
+  <a href="https://www.npmjs.com/package/truncate-html">
+    <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm version" height="18">
+  </a>
+</div>
 
 **Notice** This is a node module depends on cheerio *can only run on nodejs*. If you need a browser version, you may consider [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
 
