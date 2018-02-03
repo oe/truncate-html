@@ -5,6 +5,16 @@ Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore
 
 **Notice** This is a node module depends on cheerio *can only run on nodejs*. If you need a browser version, you may consider [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
 
+```js
+const truncate = require('truncate-html')
+truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>', 2, { byWords: true })
+// => <h2><img src="xxx.jpg">Hello from ...</h2>
+```
+
+## Install
+`npm install truncate-html` or `yarn add truncate-html`
+
+
 ## Method
 ```js
 truncate(html, [length], [options])
@@ -34,10 +44,6 @@ truncate.defaultOptions = {
 };
 ```
 
-## Install
-```
-npm install truncate-html
-```
 
 ## Usage
 **Notice** Extra blank spaces in html content will be removed. If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final html content's length will be `options.length` + `options.ellipsis`.
