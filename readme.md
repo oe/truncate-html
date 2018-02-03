@@ -1,5 +1,5 @@
 
-<h1 align="center">Truncate-html</h1>
+<h1 align="center">truncate-html</h1>
 
 <h5 align="center"> Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
 <div align="center">
@@ -24,8 +24,10 @@ truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>', 2, { byWords: true })
 // => <h2><img src="xxx.jpg">Hello from ...</h2>
 ```
 
-## Install
-`npm install truncate-html` or `yarn add truncate-html`
+## Installation
+`npm install truncate-html` <br>
+or <br>
+`yarn add truncate-html`
 
 
 ## API
