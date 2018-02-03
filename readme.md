@@ -28,38 +28,72 @@ truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>', 2, { byWords: true })
 `npm install truncate-html` or `yarn add truncate-html`
 
 
-## Method
+## API
 ```js
+/**
+ * truncate html
+ * @method truncate(html, [length], [options])
+ * @param  {String}         html    html string to truncate
+ * @param  {Object|number}  length how many letters(words if `byWords` is true) you want reserve
+ * @param  {Object|null}    options
+ * @param  {Boolean}        [options.stripTags] remove all tags, default false
+ * @param  {String}         [options.ellipsis] ellipsis sign, default '...'
+ * @param  {Boolean}        [options.decodeEntities] decode html entities(e.g. convert `&amp;` to `&`) before
+ *                                                   counting length, default false
+ * @param  {String|Array}   [options.excludes] elements' selector you want ignore
+ * @param  {Number}         [options.length] how many letters(words if `byWords` is true)
+ *                                           you want reserve
+ * @param  {Boolean}        [options.byWords] if true, length means how many words to reserve
+ * @param  {Boolean|Number} [options.reserveLastWord] how to deal with when truncate in the middle of a word
+ *                                1. by default, just cut at that position.
+ *                                2. set it to true, with max exceed 10 letters can exceed to reserver the last word
+ *                                3. set it to a positive number decide how many letters can exceed to reserve the last word
+ *                                4. set it to negetive number to remove the last word if cut in the middle.
+ * @param  {Boolean}        [options.keepWhitespaces] keep whitespaces, by default continuous
+ *                                spaces will be replaced with one space
+ *                                set it true to reserve them, and continuous spaces will count as one
+ * @return {String}
+ */
 truncate(html, [length], [options])
+// and truncate.setup to change default options
+truncate.setup(options)
 ```
-
-### Available options
-```
-{
-    length: Number, content length to truncate
-    byWords: Boolean, whether truncate by words, aka `length` means words count
-    stripTags: Boolean, whether to remove tags
-    ellipsis: String, custom ellipsis sign, set it to empty string to remove the ellipsis postfix
-    excludes: String or Array, the selectors of the elements you want to ignore
-    decodeEntities: Boolean, auto decode html entities in the html string
-    keepWhitespaces: Boolean, keep whitespaces, whether to replace continuous spaces with one space
-}
-```
-
 ### Default options
 ```js
-truncate.defaultOptions = {
+{
   byWords: false,
   stripTags: false,
   ellipsis: '...',
   decodeEntities: false,
-  keepWhitespaces: false
-};
+  keepWhitespaces: false,
+  excludes: '',
+  reserveLastWord: false,
+  keepWhitespaces: false 
+}
 ```
 
+You can change default options by using `truncate.setup`
 
-## Usage
-**Notice** Extra blank spaces in html content will be removed. If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final html content's length will be `options.length` + `options.ellipsis`.
+e.g.
+```js
+truncate.setup({stripTags: true, length: 10})
+
+truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>')
+// => Hello from
+```
+## Notice
+### About final string length
+ If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true of none zero number, the final string will be various.
+
+### About html comments
+All html comments `<!-- xxx -->` will be removed
+
+### About dealing with none alphabetic languages
+When dealing with none alphabetic languages, such as Chinese/Japanese/Korean, they don't separate words with whitespaces, so options `byWords` and `reserveLastWord` should only works well with alphabetic languages.
+
+And the only dependency of this project `cheerio` has an issue when dealing with none alphabetic languages, see [Known Issues](#known-issues) for details.
+
+## Examples
 
 
 ```js
@@ -160,15 +194,14 @@ truncate(html, {
 ```
 
 ### Known issues
-Known issues about handing CJK characters when set the option `decodeEntities` to `true`.
+Known issues about handing CJK(Chinese/Japanese/Korean) characters when set the option `decodeEntities` to `true`.
 
-You have seen the option `decodeEntities`, it's really magic! When it's true, encoded html entities will be decoded automatically, so `&amp;` will be treat as a single character. This is probably what we want. But, if there are CJK characters in the html string, they will be replaced by characters like `&#xF6;` in the final html you get. That's confused.
+You have seen the option `decodeEntities`, it's really magic! When it's true, encoded html entities will be decoded automatically, so `&amp;` will be treat as a single character. This is probably what we want. But, if there are CJK characters in the html string, they will be replaced by characters like `&#xF6;`(still count as one character when truncating) in the final html you get. That's confused.
 
 To fix this, you have two choices:
 
 - keep the option `decodeEntities` false, but `&amp;` will treat as five characters.
 - modify cheerio's source code: find out the function `getInverse` in the file `./node_modules/cheerio/node_modules/entities/lib/decode.js`, comment out the last line `.replace(re_nonASCII, singleCharReplacer);`.
-
 
 
 

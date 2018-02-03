@@ -14,7 +14,7 @@ var defaultOptions = {
   // // set to number then truncate by word count
   // length: 0
   // excludes: '', // remove tags
-  // keepWords: false, // keep word completed if truncate at the middle of the word, works no matter byWords is true/false
+  // reserveLastWord: false, // keep word completed if truncate at the middle of the word, works no matter byWords is true/false
   // keepWhitespaces: false // even if set true, continuous whitespace will count as one
 };
 
@@ -45,6 +45,7 @@ var helper = {
     this.limit = options.length;
     this.ellipsis = options.ellipsis;
     this.keepWhitespaces = options.keepWhitespaces;
+    this.reserveLastWord = options.reserveLastWord;
   },
   // extend obj with dft
   extend: function extend (obj, dft) {
@@ -73,26 +74,25 @@ var helper = {
     }
     var byWords = this.options.byWords;
     var strLen = text.length;
-    if (!(this.limit && strLen)) {
-      return ''
-    }
     var idx = 0;
     var count = 0;
     var prevIsBlank = byWords;
     var curIsBlank = false;
     while (idx < strLen) {
       curIsBlank = this$1.isBlank(text.charAt(idx++));
+      // keep same then continue
+      if (byWords && (prevIsBlank === curIsBlank)) { continue }
       if (count === this$1.limit) {
         // reserve trailing whitespace
         if (curIsBlank) {
+          prevIsBlank = curIsBlank;
           continue
         }
         // fix idx because current char belong to next words which exceed the limit
         --idx;
         break
       }
-      // keep same then continue
-      if (byWords && (prevIsBlank === curIsBlank)) { continue }
+
       if (byWords) {
         curIsBlank || ++count;
       } else {
@@ -104,14 +104,20 @@ var helper = {
     if (this.limit) {
       return text
     } else {
-      return text.substr(0, idx) + this.ellipsis
+      if (byWords) {
+        return text.substr(0, idx) + this.ellipsis
+      } else {
+        var str = this.substr(text, idx);
+        if (str === text) { return str }
+        else { return str + this.ellipsis }
+      }
     }
   },
   // deal with cut string in the middle of a word
   substr: function substr (str, len) {
     // var boundary, cutted, result
     var cutted = str.substr(0, len);
-    if (!this.keepWords) {
+    if (!this.reserveLastWord) {
       return cutted
     }
     var boundary = str.substring(len - 1, len + 1);
@@ -119,7 +125,7 @@ var helper = {
     if (/\W/.test(boundary)) {
       return cutted
     }
-    if (this.keepWords < 0) {
+    if (this.reserveLastWord < 0) {
       var result = cutted.replace(/\w+$/, '');
       // if the cutted is not the first and the only word
       //   then return result, or return the whole word
@@ -127,8 +133,8 @@ var helper = {
         return result
       }
     }
-    // set max exceeded to 10 if this.keepWords is true or > 0
-    var maxExceeded = this.keepWords !== true && this.keepWords > 0 ? this.keepWords : 10;
+    // set max exceeded to 10 if this.reserveLastWord is true or > 0
+    var maxExceeded = this.reserveLastWord !== true && this.reserveLastWord > 0 ? this.reserveLastWord : 10;
     var exceeded = str.substr(len).match(/(\w+)/)[1];
     return cutted + exceeded.substr(0, maxExceeded)
   }
@@ -136,35 +142,33 @@ var helper = {
 
 /**
  * truncate html
- * truncate(html, [length], [options])
- * @param  {String}        html    html string to truncate
- * @param  {Object|number} length
- * @param  {Object|null}   options
- *                         {
- *                           stripTags: false, // remove all tags, default false
- *                           ellipsis: '...', // ellipsis sign, default '...'
- *                           decodeEntities: false, // decode html entities before counting length, default false
- *                           excludes: '', // elements' selector you want ignore, default none
- *                           length: 10, // how many letters you want reserve, default none
- *                           byWords: false, // if true, length means how many words to reserve
- *                           keepWords: false, //
- *                           keepWhitespaces: false // keep whitespaces, by default continuous spaces will be replaced with one space, default false
- *                         }
+ * @method truncate(html, [length], [options])
+ * @param  {String}         html    html string to truncate
+ * @param  {Object|number}  length how many letters(words if `byWords` is true) you want reserve
+ * @param  {Object|null}    options
+ * @param  {Boolean}        [options.stripTags] remove all tags, default false
+ * @param  {String}         [options.ellipsis] ellipsis sign, default '...'
+ * @param  {Boolean}        [options.decodeEntities] decode html entities(e.g. convert `&amp;` to `&`) before
+ *                                                   counting length, default false
+ * @param  {String|Array}   [options.excludes] elements' selector you want ignore
+ * @param  {Number}         [options.length] how many letters(words if `byWords` is true)
+ *                                           you want reserve
+ * @param  {Boolean}        [options.byWords] if true, length means how many words to reserve
+ * @param  {Boolean|Number} [options.reserveLastWord] how to deal with when truncate in the middle of a word
+ *                                1. by default, just cut at that position.
+ *                                2. set it to true, with max exceed 10 letters can exceed to reserver the last word
+ *                                3. set it to a positive number decide how many letters can exceed to reserve the last word
+ *                                4. set it to negetive number to remove the last word if cut in the middle.
+ * @param  {Boolean}        [options.keepWhitespaces] keep whitespaces, by default continuous
+ *                                                    spaces will be replaced with one space, set
+ *                                                    it true to keep them
  * @return {String}
- * @example
- * truncate('<p>wweeweewewwe</p>', 10)
- * truncate('<p>wweeweewewwe</p>', 10, {stripTags: true})
- * truncate('<p>wweeweewewwe</p>', {stripTags: true, length: 10})
  */
 function truncate (html, length, options) {
   helper.setup(length, options);
   if (!html || isNaN(helper.limit) || helper.limit <= 0) {
     return html
   }
-  if (typeof html === 'object') {
-    html = cheerio(html).html();
-  }
-
   // Add a wrapper for text node without tag like:
   //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
   var $ = cheerio.load(("<div>" + html + "</div>"), {
@@ -207,7 +211,7 @@ function truncate (html, length, options) {
 truncate.setup = function (options) {
   if ( options === void 0 ) options = {};
 
-  helper.extend(defaultOptions, options);
+  Object.assign(defaultOptions, options);
 };
 
 export default truncate;
