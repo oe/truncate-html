@@ -18,10 +18,11 @@
 
 **Notice** This is a node module depends on cheerio *can only run on nodejs*. If you need a browser version, you may consider [truncate](https://github.com/pathable/truncate) or [nodejs-html-truncate](https://github.com/huang47/nodejs-html-truncate).
 
-```js
+
+```javascript
 const truncate = require('truncate-html')
-truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>', 2, { byWords: true })
-// => <h2><img src="xxx.jpg">Hello from ...</h2>
+truncate('<p><img src="xxx.jpg">Hello from earth!</p>', 2, { byWords: true })
+// => <p><img src="xxx.jpg">Hello from ...</p>
 ```
 
 ## Installation
@@ -31,7 +32,7 @@ or <br>
 
 
 ## API
-```js
+```javascript
 /**
  * truncate html
  * @method truncate(html, [length], [options])
@@ -77,12 +78,14 @@ truncate.setup(options)
 You can change default options by using `truncate.setup`
 
 e.g.
-```js
+
+```javascript
 truncate.setup({stripTags: true, length: 10})
 
-truncate('<h2><img src="xxx.jpg">Hello from earth!</h2>')
+truncate('<p><img src="xxx.jpg">Hello from earth!</p>')
 // => Hello from
 ```
+
 ## Notice
 ### About final string length
  If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true of none zero number, the final string will be various.
@@ -97,8 +100,7 @@ And the only dependency of this project `cheerio` has an issue when dealing with
 
 ## Examples
 
-
-```js
+```javascript
 var truncate = require('truncate-html');
 
 // truncate html
