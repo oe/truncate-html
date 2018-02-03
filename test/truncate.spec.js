@@ -47,6 +47,20 @@ describe('Truncate html', () => {
       expect(truncate(test, 8)).toBe(expected)
     })
 
+    it('should works well when truncate at tag boundary', () => {
+      let test = 'Hello <b>world</b>'
+      let expected = 'Hello ...'
+
+      expect(truncate(test, 6)).toBe(expected)
+    })
+
+    it('should works well when truncate at tag boundary-2', () => {
+      let test = 'Hello <b>world</b>'
+      let expected = 'Hello <b>world</b>'
+
+      expect(truncate(test, 11)).toBe(expected)
+    })
+
     it('should truncate a string two sets of tags', () => {
       let test = '<p>12345</p><p>6789</p>'
       let expected = '<p>12345</p><p>67...</p>'
@@ -187,6 +201,25 @@ describe('Truncate html', () => {
       }
       expect(truncate(html, 10, options)).toBe(expected)
     })
+
+    it('should works well when truncate at tag boundary', () => {
+      let test = 'Hello <b>world</b>'
+      let expected = 'Hello ...'
+      let options = {
+        byWords: true
+      }
+      expect(truncate(test, 1, options)).toBe(expected)
+    })
+
+    it('should works well when truncate at tag boundary', () => {
+      let test = 'Hello <b>world</b>'
+      let expected = 'Hello <b>world</b>'
+      let options = {
+        byWords: true
+      }
+      expect(truncate(test, 2, options)).toBe(expected)
+    })
+
     describe('works with options.reserveLastWord', () => {
       it('should ignore reserveLastWord when byWords is on(length bigger)', () => {
         let html = '<p><img src="abc.png">This is a string do</p> for test.'
@@ -368,6 +401,13 @@ describe('Truncate html', () => {
         reserveLastWord: false,
         keepWhitespaces: false
       })
+    })
+    it('should use works well if setup with empty', () => {
+      truncate.setup()
+      let test = 'hello from earth'
+      let expected = 'hello from e...'
+
+      expect(truncate(test, 12)).toBe(expected)
     })
 
     it('should use default length', () => {

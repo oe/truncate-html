@@ -66,7 +66,13 @@ const helper = {
   isBlank (char) {
     return char === ' ' || char === '\f' || char === '\n' || char === '\r' || char === '\t' || char === '\v' || char === '\u00A0' || char === '\u2028' || char === '\u2029'
   },
-  truncate (text) {
+  /**
+   * truncate text
+   * @param  {String}  text        text to truncate
+   * @param  {Boolean} isLastNode  is last dom node, help to decide whether add ellipsis
+   * @return {String}
+   */
+  truncate (text, isLastNode) {
     if (!this.keepWhitespaces) {
       text = text.replace(/\s+/g, ' ')
     }
@@ -102,12 +108,17 @@ const helper = {
     if (this.limit) {
       return text
     } else {
+      let str
       if (byWords) {
-        return text.substr(0, idx) + this.ellipsis
+        str = text.substr(0, idx)
       } else {
-        let str = this.substr(text, idx)
-        if (str === text) return str
-        else return str + this.ellipsis
+        str = this.substr(text, idx)
+      }
+      if (str === text) {
+        // if is lat node, no need of ellipsis, or add it
+        return isLastNode ? text : text + this.ellipsis
+      } else {
+        return str + this.ellipsis
       }
     }
   },
@@ -180,14 +191,16 @@ export default function truncate (html, length, options) {
     return helper.truncate($html.text())
   }
   const travelChildren = function ($ele) {
-    return $ele.contents().each(function () {
+    const contents = $ele.contents()
+    const lastIdx = contents.length - 1
+    return contents.each(function (idx) {
       switch (this.type) {
         case 'text':
           if (!helper.limit) {
             $(this).remove()
             return
           }
-          this.data = helper.truncate($(this).text())
+          this.data = helper.truncate($(this).text(), idx === lastIdx)
           break
         case 'tag':
           if (!helper.limit) {
@@ -207,5 +220,5 @@ export default function truncate (html, length, options) {
 }
 
 truncate.setup = (options = {}) => {
-  Object.assign(defaultOptions, options)
+  return Object.assign(defaultOptions, options)
 }
