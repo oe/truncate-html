@@ -21,7 +21,14 @@
     "html",
     "truncate"
   ],
-  "author": "Saiya",
+  "author": {
+    "name": "Saiya",
+    "url": "https://github.com/evecalm"
+  },
+  "contributors": [{
+    "name": "Calebeno",
+    "url": "https://github.com/calebeno"
+  }],
   "license": "MIT",
   "dependencies": {
     "cheerio": "0.22.0"

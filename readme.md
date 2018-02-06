@@ -197,7 +197,7 @@ truncate(html, {
 
 ```
 
-### Known issues
+## Known issues
 Known issues about handing CJK(Chinese/Japanese/Korean) characters when set the option `decodeEntities` to `true`.
 
 You have seen the option `decodeEntities`, it's really magic! When it's true, encoded html entities will be decoded automatically, so `&amp;` will be treat as a single character. This is probably what we want. But, if there are CJK characters in the html string, they will be replaced by characters like `&#xF6;`(still count as one character when truncating) in the final html you get. That's confused.
@@ -208,4 +208,6 @@ To fix this, you have two choices:
 - modify cheerio's source code: find out the function `getInverse` in the file `./node_modules/cheerio/node_modules/entities/lib/decode.js`, comment out the last line `.replace(re_nonASCII, singleCharReplacer);`.
 
 
-
+## Credits
+Thanks to:
+- [@calebeno](https://github.com/calebeno) es6 support and unit tests
