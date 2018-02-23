@@ -307,6 +307,42 @@ describe('Truncate html', () => {
       }
       expect(truncate(html, options)).toBe(expected)
     })
+
+    describe('last character in html tag', () => {
+      const testString = '123456<div>7</div><div>89</div>12';
+
+      it('should add ellipsis before a tag', () => {
+        let expected = '123456...';
+        expect(truncate(testString, 6)).toBe(expected);
+      });
+
+      it('should add ellipsis in a tag with one character', () => {
+        let expected = '123456<div>7...</div>';
+        expect(truncate(testString, 7)).toBe(expected);
+      });
+
+      it('should add ellipsis within tag', () => {
+        let expected = '123456<div>7</div><div>8...</div>';
+        expect(truncate(testString, 8)).toBe(expected);
+      });
+
+      it('should add ellipsis in a tag with multiple characters', () => {
+        let expected = '123456<div>7</div><div>89...</div>';
+        expect(truncate(testString, 9)).toBe(expected);
+      });
+
+      it('should add ellipsis after a character after closing tag', () => {
+        let expected = '123456<div>7</div><div>89</div>1...';
+        expect(truncate(testString, 10)).toBe(expected);
+      });
+
+      it('should add ellipsis in a nested tag ', () => {
+        let test = '123456<div>7</div><div><b>89</b></div>12';
+        let expected = '123456<div>7</div><div><b>89...</b></div>';
+        expect(truncate(test, 9)).toBe(expected);
+      });
+
+    });
   })
 
   describe('with options.excludes', () => {
