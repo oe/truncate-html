@@ -192,7 +192,9 @@ function truncate (html, length, options) {
   if (helper.options.stripTags) {
     return helper.truncate($html.text())
   }
-  var travelChildren = function ($ele) {
+  var travelChildren = function ($ele, isParentLastNode) {
+    if ( isParentLastNode === void 0 ) isParentLastNode = true;
+
     var contents = $ele.contents();
     var lastIdx = contents.length - 1;
     return contents.each(function (idx) {
@@ -202,13 +204,13 @@ function truncate (html, length, options) {
             $(this).remove();
             return
           }
-          this.data = helper.truncate($(this).text(), idx === lastIdx);
+          this.data = helper.truncate($(this).text(), (isParentLastNode && idx === lastIdx));
           break
         case 'tag':
           if (!helper.limit) {
             $(this).remove();
           } else {
-            return travelChildren($(this))
+            return travelChildren($(this), (isParentLastNode && idx === lastIdx))
           }
           break
         default:
