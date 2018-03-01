@@ -9,7 +9,7 @@
     "dev": "npm run build:dir",
     "build": "npm run lint && npm run test && npm run build:dir",
     "build:dir": "npm run clean:builddir && rollup -c --environment format:cjs && rollup -c --environment format:es",
-    "clean:builddir": "del-cli dist/*",
+    "clean:builddir": "rimraf dist/*",
     "test": "jest --coverage",
     "test:server": "jest --coverage --watch",
     "lint": "eslint --ext .js -f ./node_modules/eslint-friendly-formatter --fix src"
