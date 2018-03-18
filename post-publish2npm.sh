@@ -21,7 +21,7 @@ NC='\033[0m'
 version=`cat package.json | awk -F [:] '/version/{print $2}' | sed 's/[\"\,]//g'`
 tag="${version}"
 
-git tag "${tag}"
-git push origin "${tag}"
+git tag ${tag}
+git push origin ${tag}
 
 echo -e "\n${green}New Tag ${tag} has been push to origin:)"
