@@ -16,12 +16,22 @@ grey='\033[0;37m'
 # no color
 NC='\033[0m'
 
+# trim string
+trim() {
+  local var="$*"
+  # remove leading whitespace characters
+  var="${var#"${var%%[![:space:]]*}"}"
+  # remove trailing whitespace characters
+  var="${var%"${var##*[![:space:]]}"}"
+  echo -n "$var"
+}
+
 # tag
 # read package.json's version
 version=`cat package.json | awk -F [:] '/version/{print $2}' | sed 's/[\"\,]//g'`
-tag="${version}"
+tag="v`trim ${version}`"
 
-git tag ${tag}
-git push origin ${tag}
+git tag "${tag}"
+git push origin "${tag}"
 
 echo -e "\n${green}New Tag ${tag} has been push to origin:)"
