@@ -1,6 +1,6 @@
 {
   "name": "truncate-html",
-  "version": "1.0.0-rc.6",
+  "version": "1.0.0",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
@@ -9,6 +9,7 @@
     "build": "npm run lint && npm run test && npm run build:dir",
     "build:dir": "npm run clean:builddir && rollup -c --environment format:cjs && rollup -c --environment format:es",
     "clean:builddir": "rimraf dist/*",
+    "postpublish": "./post-publish2npm.sh",
     "test": "jest --coverage",
     "test:server": "jest --coverage --watch",
     "lint": "eslint --ext .js -f ./node_modules/eslint-friendly-formatter --fix src"
