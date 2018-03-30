@@ -30,6 +30,8 @@ truncate('<p><img src="xxx.jpg">Hello from earth!</p>', 2, { byWords: true })
 or <br>
 `yarn add truncate-html`
 
+## Try it online
+Click **<https://npm.runkit.com/truncate-html>** to try.
 
 ## API
 ```javascript
