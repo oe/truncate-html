@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "tabSize": 2,
+    "outDir": "./built/",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es6",
+    "allowJs": false,
+    "baseUrl": "./",
+    "lib": ["dom", "es7"]
+  },
+  "include": ["./src/**/*.ts"]
+}

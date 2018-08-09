@@ -1,8 +1,9 @@
 import buble from 'rollup-plugin-buble'
+import typescript from 'rollup-plugin-typescript'
 import pkg from './package.json'
 
 export default {
-  input: 'src/truncate.js',
+  input: 'src/truncate.ts',
   output: {
     name: 'truncate-html',
     banner: `/*!
@@ -13,6 +14,9 @@ export default {
     file: `dist/truncate.${process.env.format}.js`
   },
   plugins: [
+    typescript({
+      typescript: require('typescript')
+    }),
     buble()
   ]
 }
