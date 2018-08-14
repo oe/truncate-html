@@ -96,9 +96,8 @@ const helper = {
           } as IOptions
         }
     }
-    const lenType = typeof options!.length
-    if (lenType !== 'undefined' && lenType !== 'number') throw new TypeError('truncate-html: options.length should be a number')
     const fullOptions = this.extend(options, defaultOptions) as IFullOptions
+    // if (typeof fullOptions.length !== 'number') throw new TypeError('truncate-html: options.length should be a number')
     if (fullOptions.excludes) {
       if (!Array.isArray(fullOptions.excludes)) {
         fullOptions.excludes = [fullOptions.excludes]
@@ -243,7 +242,7 @@ function isCheerioInstance (elem: any) {
 interface ITruncateHtml {
   (html: string | CheerioStatic, length?: number, options?: IOptions): string
   (html: string | CheerioStatic, options?: IOptions): string
-  setup?: (option: IOptions) => void
+  setup: (option: IOptions) => void
 }
 /**
  * truncate html
@@ -254,13 +253,14 @@ interface ITruncateHtml {
  * @return {String}
  */
 const truncate = function (html: string | Cheerio | CheerioStatic, length?: any, options?: any) {
-  if (typeof length !== 'undefined') {
-    helper.setup(length, options)
-  }
-  if (!html || isNaN(helper.limit) || helper.limit <= 0) {
+  helper.setup(length, options)
+  if (!html ||
+    isNaN(helper.limit) ||
+    helper.limit <= 0 ||
+    helper.limit === Infinity) {
     return html
   }
-  if (typeof helper.options.length === 'undefined') throw new TypeError('truncate-html: options.length has not been set')
+
   // if (helper.limit)
   let $: CheerioStatic
   // support provied cheerio

@@ -1,6 +1,5 @@
 {
   "compilerOptions": {
-    "tabSize": 2,
     "outDir": "./built/",
     "sourceMap": true,
     "strict": true,
@@ -9,7 +8,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "module": "es6",
+    "module": "commonjs",
     "moduleResolution": "node",
     "target": "es6",
     "allowJs": false,
