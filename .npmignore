@@ -6,3 +6,5 @@ src
 .*
 *.config.js
 *.sh
+tsconfig.json
+tslint.json

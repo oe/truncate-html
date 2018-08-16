@@ -1,4 +1,5 @@
 import truncate from '../src/truncate'
+import * as cheerio from 'cheerio'
 
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {
@@ -12,10 +13,23 @@ describe('Truncate html', () => {
       expect(truncate(html)).toBe(html)
     })
 
+    it('should NOT truncate a string if NO length provided $', () => {
+      const html = cheerio.load('string')
+
+      expect(truncate(html)).toBe(html)
+    })
+
     it('should NOT truncate a string if length is less than or equal to zero', () => {
       const html = 'string'
 
       expect(truncate(html, 0)).toBe(html)
+    })
+
+    it('should NOT truncate a string if length is less than or equal to zero $', () => {
+      const html = 'string'
+      const $ = cheerio.load(html)
+
+      expect(truncate($, 0)).toBe($)
     })
   })
 
@@ -25,6 +39,12 @@ describe('Truncate html', () => {
       const expected = '12345...'
 
       expect(truncate(test, 5)).toBe(expected)
+    })
+    it('should truncate a string $', () => {
+      const test = '123456789'
+      const expected = '12345...'
+      const $ = cheerio.load(test)
+      expect(truncate($, 5)).toBe(expected)
     })
 
     it('should truncate a string with tags', () => {
@@ -68,8 +88,24 @@ describe('Truncate html', () => {
       expect(truncate(test, 7)).toBe(expected)
     })
 
+    it('should truncate a string two sets of tags $', () => {
+      const test = cheerio.load('<p>12345</p><p>6789</p>')
+      const expected = '<p>12345</p><p>67...</p>'
+
+      expect(truncate(test, 7)).toBe(expected)
+    })
+
     it('should keep empty tag', () => {
-      const test = '<span></span><p>12345</p><p>6789</p><span> reset text </span>'
+      const test =
+        '<span></span><p>12345</p><p>6789</p><span> reset text </span>'
+      const expected = '<span></span><p>12345</p><p>67...</p>'
+
+      expect(truncate(test, 7)).toBe(expected)
+    })
+
+    it('should keep empty tag $', () => {
+      const test =
+        cheerio.load('<span></span><p>12345</p><p>6789</p><span> reset text </span>')
       const expected = '<span></span><p>12345</p><p>67...</p>'
 
       expect(truncate(test, 7)).toBe(expected)
@@ -94,54 +130,77 @@ describe('Truncate html', () => {
         const test = '<p>12345</p><p>6789</p>'
         const expected = '<p>12345</p><p>6789</p>'
 
-        expect(truncate(test, 7, {
-          reserveLastWord: true
-        })).toBe(expected)
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: true
+          })
+        ).toBe(expected)
       })
 
       it('should reserve the last word(i18n)', () => {
         const test = '<p>internationalization</p>'
         const expected = '<p>internationalization</p>'
 
-        expect(truncate(test, 7, {
-          reserveLastWord: 20 // exceed 20 letters
-        })).toBe(expected)
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: 20 // exceed 20 letters
+          })
+        ).toBe(expected)
       })
 
       it('should cut at the last word(i18n)', () => {
         const test = '<p>internationalization</p>'
         const expected = '<p>internationalizat...</p>'
 
-        expect(truncate(test, 7, {
-          reserveLastWord: true // exceed 10 letters
-        })).toBe(expected)
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: true // exceed 10 letters
+          })
+        ).toBe(expected)
       })
 
       it('should reserve the last word if only one word', () => {
         const test = '<p>internationalization</p>'
         const expected = '<p>internationalizat...</p>'
 
-        expect(truncate(test, 7, {
-          reserveLastWord: -1 // exceed 10 letters
-        })).toBe(expected)
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
+      })
+
+      it('should reserve the last word if only one word $', () => {
+        const test = cheerio.load('<p>internationalization</p>')
+        const expected = '<p>internationalizat...</p>'
+
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
       })
 
       it('should reserve the last word if at the boundary', () => {
         const test = '<p>Hello world from earth</p>'
         const expected = '<p>Hello world ...</p>'
 
-        expect(truncate(test, 11, {
-          reserveLastWord: -1 // exceed 10 letters
-        })).toBe(expected)
+        expect(
+          truncate(test, 11, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
       })
 
       it('should remove the last word if more than one(i18n, reserveLastWord negative)', () => {
         const test = '<p>hello internationalization</p>'
         const expected = '<p>hello ...</p>'
 
-        expect(truncate(test, 7, {
-          reserveLastWord: -1 // exceed 10 letters
-        })).toBe(expected)
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
       })
     })
   })
@@ -174,7 +233,8 @@ describe('Truncate html', () => {
     })
 
     it('should remove all tags', () => {
-      const html = '<p><img src="abc.png">This <hr>is a string</p><br> for test.'
+      const html =
+        '<p><img src="abc.png">This <hr>is a string</p><br> for test.'
       const expected = 'This is a ...'
       const options = {
         stripTags: true
@@ -223,7 +283,8 @@ describe('Truncate html', () => {
     describe('works with options.reserveLastWord', () => {
       it('should ignore reserveLastWord when byWords is on(length bigger)', () => {
         const html = '<p><img src="abc.png">This is a string do</p> for test.'
-        const expected = '<p><img src="abc.png">This is a string do</p> for test.'
+        const expected =
+          '<p><img src="abc.png">This is a string do</p> for test.'
         const options = {
           byWords: true,
           reserveLastWord: true
@@ -245,7 +306,8 @@ describe('Truncate html', () => {
 
   describe('with options.whitespaces', () => {
     it('should trim whitespaces', () => {
-      const html = '<p>         <img src="abc.png">This is a string</p> for test.'
+      const html =
+        '<p>         <img src="abc.png">This is a string</p> for test.'
       const expected = '<p> <img src="abc.png">This is a ...</p>'
       const options = {
         keepWhitespaces: false
@@ -255,7 +317,8 @@ describe('Truncate html', () => {
     })
 
     it('should preserve whitespaces', () => {
-      const html = '<p>         <img src="abc.png">This is a string</p> for test.'
+      const html =
+        '<p>         <img src="abc.png">This is a string</p> for test.'
       const expected = '<p>         <img src="abc.png">This is a ...</p>'
       const options = {
         keepWhitespaces: true
@@ -341,7 +404,6 @@ describe('Truncate html', () => {
         const expected = '123456<div>7</div><div><b>89...</b></div>'
         expect(truncate(test, 9)).toBe(expected)
       })
-
     })
   })
 
@@ -358,7 +420,8 @@ describe('Truncate html', () => {
     })
 
     it('should exclude multiple elements by selector', () => {
-      const html = '<p><img src="abc.png">This is a string</p><div class="something-unwanted"> unwanted string inserted ( ´•̥̥̥ω•̥̥̥` ）</div> for test.'
+      const html =
+        '<p><img src="abc.png">This is a string</p><div class="something-unwanted"> unwanted string inserted ( ´•̥̥̥ω•̥̥̥` ）</div> for test.'
       const expected = '<p>This is a string</p> for ...'
       const options = {
         length: 20,

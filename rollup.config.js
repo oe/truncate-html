@@ -1,5 +1,5 @@
 import buble from 'rollup-plugin-buble'
-import typescript from 'rollup-plugin-typescript'
+import typescript from 'rollup-plugin-typescript2'
 import pkg from './package.json'
 
 export default {
@@ -15,8 +15,12 @@ export default {
   },
   plugins: [
     typescript({
+      tsconfigOverride: {
+        compilerOptions: { module: 'esnext' }
+      },
       typescript: require('typescript')
     }),
     buble()
-  ]
+  ],
+  external: ['cheerio']
 }

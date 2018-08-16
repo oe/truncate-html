@@ -214,12 +214,12 @@ const helper = {
         return result
       }
     }
+
     // set max exceeded to 10 if this.reserveLastWord is true or > 0
     const maxExceeded =
       this.reserveLastWord !== true && this.reserveLastWord > 0
         ? this.reserveLastWord
         : 10
-
     const mtc = str.substr(len).match(/(\w+)/)
     const exceeded = mtc ? mtc[1] : ''
     return cutted + exceeded.substr(0, maxExceeded)
@@ -228,12 +228,10 @@ const helper = {
 
 /** return true if elem is CheerioStatic */
 function isCheerioInstance (elem: any) {
-  return (elem &&
-    typeof elem === 'object' &&
-    elem.root &&
+  return elem &&
     elem.contains &&
     elem.html &&
-    elem.parseHTML) as boolean
+    elem.parseHTML && true
 }
 
 /**
@@ -244,6 +242,7 @@ interface ITruncateHtml {
   (html: string | CheerioStatic, options?: IOptions): string
   setup: (option: IOptions) => void
 }
+
 /**
  * truncate html
  * @method truncate(html, [length], [options])
@@ -252,7 +251,7 @@ interface ITruncateHtml {
  * @param  {Object|null}    options
  * @return {String}
  */
-const truncate = function (html: string | Cheerio | CheerioStatic, length?: any, options?: any) {
+const truncate = function (html: string | CheerioStatic, length?: any, options?: any) {
   helper.setup(length, options)
   if (!html ||
     isNaN(helper.limit) ||
