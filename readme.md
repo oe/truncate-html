@@ -124,7 +124,7 @@ And the only dependency of this project `cheerio` has an issue when dealing with
 
 ### Using existing cheerio instance
 
-If you want using existing cheerio instance, truncate option `decodeEntities` will not work, you should set it in your own cheerio instance:
+If you want to use existing cheerio instance, truncate option `decodeEntities` will not work, you should set it in your own cheerio instance:
 
 ```js
 const $ = cheerio.load(`${html}`, {
