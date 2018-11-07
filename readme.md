@@ -6,6 +6,9 @@
     <img src="https://travis-ci.org/evecalm/truncate-html.svg?branch=master" alt="Travis CI">
   </a>
   <a href="#readme">
+    <img src="https://badges.frapsoft.com/typescript/code/typescript.svg?v=101" alt="code with typescript" height="20">
+  </a>
+  <a href="#readme">
     <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version" height="18">
   </a>
   <a href="https://www.npmjs.com/package/truncate-html">
@@ -107,6 +110,10 @@ truncate($)
 ```
 
 ## Notice
+
+### Typescript support
+
+This lib is written with typescript and has a defination file along with it. You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see #19.
 
 ### About final string length
 

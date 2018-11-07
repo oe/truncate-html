@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "npm run build:dir",
     "build": "npm run lint && npm run test && npm run build:dir",
-    "build:dir": "npm run clean:builddir && rollup -c --environment format:cjs && rollup -c --environment format:es",
+    "build:dir": "npm run clean:builddir && rollup -c rollup.config.ts",
     "clean:builddir": "rimraf dist/*",
     "postpublish": "./post-publish2npm.sh",
     "test": "jest --coverage",
