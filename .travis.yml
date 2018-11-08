@@ -3,8 +3,8 @@ node_js:
   - '8.9.4'
 cache:
   directories:
-  - node_modules
+    - node_modules
 install:
-- npm install
+  - yarn
 script:
-- npm run build
+  - yarn run build

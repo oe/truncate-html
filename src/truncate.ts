@@ -85,11 +85,11 @@ const helper = {
   setup (length: number | IOptions, options?: IOptions) {
     switch (typeof length) {
       case 'object':
-        options = length as IOptions
+        options = length
         break
       case 'number':
         if (typeof options === 'object') {
-          options.length = length as number
+          options.length = length
         } else {
           options = {
             length: length
