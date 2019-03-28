@@ -80,6 +80,8 @@ const defaultOptions: IOptions = {
   keepWhitespaces: false // even if set true, continuous whitespace will count as one
 }
 
+const astralRange: RegExp = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g
+
 // helper method
 const helper = {
   setup (length: number | IOptions, options?: IOptions) {
@@ -149,13 +151,15 @@ const helper = {
       text = text.replace(/\s+/g, ' ')
     }
     const byWords = this.options.byWords
-    const strLen = text.length
+    const match = text.match(astralRange)
+    const astralSafeCharacterArray = match === null ? [] : match
+    const strLen =  match === null ? 0 : astralSafeCharacterArray.length
     let idx = 0
     let count = 0
     let prevIsBlank = byWords
     let curIsBlank = false
     while (idx < strLen) {
-      curIsBlank = this.isBlank(text.charAt(idx++))
+      curIsBlank = this.isBlank(astralSafeCharacterArray[idx++])
       // keep same then continue
       if (byWords && prevIsBlank === curIsBlank) continue
       if (count === this.limit) {

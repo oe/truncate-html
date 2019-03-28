@@ -1,6 +1,6 @@
 /*!
  * trancate-html v1.0.1
- * Copyright© 2018 Saiya https://github.com/evecalm/truncate-html#readme
+ * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
  */
 import { load } from 'cheerio';
 
@@ -21,6 +21,7 @@ var defaultOptions = {
     reserveLastWord: false,
     keepWhitespaces: false // even if set true, continuous whitespace will count as one
 };
+var astralRange = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g;
 // helper method
 var helper = {
     setup: function setup(length, options) {
@@ -91,13 +92,15 @@ var helper = {
             text = text.replace(/\s+/g, ' ');
         }
         var byWords = this.options.byWords;
-        var strLen = text.length;
+        var match = text.match(astralRange);
+        var astralSafeCharacterArray = match === null ? [] : match;
+        var strLen = match === null ? 0 : astralSafeCharacterArray.length;
         var idx = 0;
         var count = 0;
         var prevIsBlank = byWords;
         var curIsBlank = false;
         while (idx < strLen) {
-            curIsBlank = this$1.isBlank(text.charAt(idx++));
+            curIsBlank = this$1.isBlank(astralSafeCharacterArray[idx++]);
             // keep same then continue
             if (byWords && prevIsBlank === curIsBlank)
                 { continue; }
