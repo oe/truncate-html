@@ -59,7 +59,7 @@ interface IHelper {
   extend (a: any, b: any): any
   isBlank (char: string): boolean
   truncate (text: string, isLastNode?: boolean): string
-  substr (str: string, len: number): string
+  substr (arr: Array<string>, len: number): string
 }
 
 // default options
@@ -188,7 +188,7 @@ const helper = {
       if (byWords) {
         str = text.substr(0, idx)
       } else {
-        str = this.substr(text, idx)
+        str = this.substr(astralSafeCharacterArray, idx)
       }
       if (str === text) {
         // if is lat node, no need of ellipsis, or add it
@@ -199,13 +199,13 @@ const helper = {
     }
   },
   // deal with cut string in the middle of a word
-  substr (str, len) {
+  substr (astralSafeCharacterArray, len) {
     // var boundary, cutted, result
-    const cutted = str.substr(0, len)
+    const cutted = astralSafeCharacterArray.slice(0, len).join('')
     if (!this.reserveLastWord) {
       return cutted
     }
-    const boundary = str.substring(len - 1, len + 1)
+    const boundary = astralSafeCharacterArray.slice(len - 1, len + 1).join('')
     // if truncate at word boundary, just return
     if (/\W/.test(boundary)) {
       return cutted
@@ -224,7 +224,7 @@ const helper = {
       this.reserveLastWord !== true && this.reserveLastWord > 0
         ? this.reserveLastWord
         : 10
-    const mtc = str.substr(len).match(/(\w+)/)
+    const mtc = astralSafeCharacterArray.slice(len).join('').match(/(\w+)/)
     const exceeded = mtc ? mtc[1] : ''
     return cutted + exceeded.substr(0, maxExceeded)
   }

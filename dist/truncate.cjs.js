@@ -134,7 +134,7 @@ var helper = {
                 str = text.substr(0, idx);
             }
             else {
-                str = this.substr(text, idx);
+                str = this.substr(astralSafeCharacterArray, idx);
             }
             if (str === text) {
                 // if is lat node, no need of ellipsis, or add it
@@ -146,13 +146,13 @@ var helper = {
         }
     },
     // deal with cut string in the middle of a word
-    substr: function substr(str, len) {
+    substr: function substr(astralSafeCharacterArray, len) {
         // var boundary, cutted, result
-        var cutted = str.substr(0, len);
+        var cutted = astralSafeCharacterArray.slice(0, len).join('');
         if (!this.reserveLastWord) {
             return cutted;
         }
-        var boundary = str.substring(len - 1, len + 1);
+        var boundary = astralSafeCharacterArray.slice(len - 1, len + 1).join('');
         // if truncate at word boundary, just return
         if (/\W/.test(boundary)) {
             return cutted;
@@ -169,7 +169,7 @@ var helper = {
         var maxExceeded = this.reserveLastWord !== true && this.reserveLastWord > 0
             ? this.reserveLastWord
             : 10;
-        var mtc = str.substr(len).match(/(\w+)/);
+        var mtc = astralSafeCharacterArray.slice(len).join('').match(/(\w+)/);
         var exceeded = mtc ? mtc[1] : '';
         return cutted + exceeded.substr(0, maxExceeded);
     }
