@@ -1,6 +1,6 @@
 /*!
  * trancate-html v1.0.1
- * Copyright© 2018 Saiya https://github.com/evecalm/truncate-html#readme
+ * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
  */
 'use strict';
 
@@ -23,6 +23,7 @@ var defaultOptions = {
     reserveLastWord: false,
     keepWhitespaces: false // even if set true, continuous whitespace will count as one
 };
+var astralRange = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g;
 // helper method
 var helper = {
     setup: function setup(length, options) {
@@ -93,13 +94,15 @@ var helper = {
             text = text.replace(/\s+/g, ' ');
         }
         var byWords = this.options.byWords;
-        var strLen = text.length;
+        var match = text.match(astralRange);
+        var astralSafeCharacterArray = match === null ? [] : match;
+        var strLen = match === null ? 0 : astralSafeCharacterArray.length;
         var idx = 0;
         var count = 0;
         var prevIsBlank = byWords;
         var curIsBlank = false;
         while (idx < strLen) {
-            curIsBlank = this$1.isBlank(text.charAt(idx++));
+            curIsBlank = this$1.isBlank(astralSafeCharacterArray[idx++]);
             // keep same then continue
             if (byWords && prevIsBlank === curIsBlank)
                 { continue; }
@@ -131,7 +134,7 @@ var helper = {
                 str = text.substr(0, idx);
             }
             else {
-                str = this.substr(text, idx);
+                str = this.substr(astralSafeCharacterArray, idx);
             }
             if (str === text) {
                 // if is lat node, no need of ellipsis, or add it
@@ -143,13 +146,13 @@ var helper = {
         }
     },
     // deal with cut string in the middle of a word
-    substr: function substr(str, len) {
+    substr: function substr(astralSafeCharacterArray, len) {
         // var boundary, cutted, result
-        var cutted = str.substr(0, len);
+        var cutted = astralSafeCharacterArray.slice(0, len).join('');
         if (!this.reserveLastWord) {
             return cutted;
         }
-        var boundary = str.substring(len - 1, len + 1);
+        var boundary = astralSafeCharacterArray.slice(len - 1, len + 1).join('');
         // if truncate at word boundary, just return
         if (/\W/.test(boundary)) {
             return cutted;
@@ -166,7 +169,7 @@ var helper = {
         var maxExceeded = this.reserveLastWord !== true && this.reserveLastWord > 0
             ? this.reserveLastWord
             : 10;
-        var mtc = str.substr(len).match(/(\w+)/);
+        var mtc = astralSafeCharacterArray.slice(len).join('').match(/(\w+)/);
         var exceeded = mtc ? mtc[1] : '';
         return cutted + exceeded.substr(0, maxExceeded);
     }

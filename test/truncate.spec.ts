@@ -532,4 +532,44 @@ describe('Truncate html', () => {
       expect(truncate(test, 12)).toBe(expected)
     })
   })
+
+  describe('should correcty handle text with emoji characters', () => {
+    it('emojis with character length more than 1', () => {
+      const test = '💩💩💩💩💩'
+      const expected = '💩💩💩...'
+
+      expect(truncate(test, 3)).toEqual(expected)
+    })
+
+    it('emojis with text', () => {
+      const test = 'Hello there, how are you??  👍👍👍‍'
+      const expected = 'Hello there, how are you?? 👍👍...'
+
+      expect(truncate(test, 29)).toEqual(expected)
+    })
+
+    it('emojis with reservedLastWord setting', () => {
+      truncate.setup({ reserveLastWord: true })
+      const test = 'Hello there    😎😎😎‍'
+      const expected = 'Hello there 😎...'
+
+      expect(truncate(test, 13)).toEqual(expected)
+    })
+
+    it('emojis with byWords setting, with keepWhitespaces false', () => {
+      truncate.setup({ byWords: true, keepWhitespaces: false })
+      const test = 'Hello there, how   are    you??    😎😎😎‍'
+      const expected = 'Hello there, how are you?? 😎😎😎‍'
+
+      expect(truncate(test, 20)).toEqual(expected)
+    })
+
+    it('emojis with keepWhitespaces setting', () => {
+      truncate.setup({ keepWhitespaces: true })
+      const test = 'Hello there  💩  💩  💩‍'
+      const expected = 'Hello there  💩  💩  💩‍'
+
+      expect(truncate(test, 20)).toEqual(expected)
+    })
+  })
 })
