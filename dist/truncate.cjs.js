@@ -1,5 +1,5 @@
 /*!
- * trancate-html v1.0.1
+ * trancate-html v1.0.2
  * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
  */
 'use strict';

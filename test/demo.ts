@@ -20,3 +20,6 @@ const expected = '12345...'
 const $ = cheerio.load(test)
 console.log(truncate($, 5))
 console.log(expected)
+
+const string = '<p>poo 💩💩💩💩💩<p>'
+console.log(truncate(string, 6))

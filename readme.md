@@ -1,6 +1,6 @@
 <h1 align="center">truncate-html</h1>
 
-<h5 align="center"> Truncate html string and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
+<h5 align="center"> Truncate html string(even contains emoji chars) and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
 <div align="center">
   <a href="https://travis-ci.org/evecalm/truncate-html">
     <img src="https://travis-ci.org/evecalm/truncate-html.svg?branch=master" alt="Travis CI">
@@ -150,6 +150,11 @@ var html = '<p><img src="abc.png">This is a string</p> for test.'
 truncate(html, 10)
 // returns: <p><img src="abc.png">This is a ...</p>
 
+// truncate string with emojis
+var string = '<p>poo 💩💩💩💩💩<p>'
+truncate(string, 6)
+// returns: <p>poo 💩💩...</p>
+
 // with options, remove all tags
 var html = '<p><img src="abc.png">This is a string</p> for test.'
 truncate(html, 10, { stripTags: true })
@@ -247,3 +252,4 @@ To fix this, you have two choices:
 Thanks to:
 
 - [@calebeno](https://github.com/calebeno) es6 support and unit tests
+- [@aaditya-thakkar](https://github.com/aaditya-thakkar) emoji truncating support

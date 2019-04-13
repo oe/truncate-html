@@ -1,6 +1,6 @@
 {
   "name": "truncate-html",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
@@ -10,6 +10,7 @@
     "prebuild": "npm run lint && npm run test && npm run clean:builddir",
     "build": "rollup -c rollup.config.ts",
     "clean:builddir": "rimraf dist/*",
+    "prepublish": "npm run build",
     "postpublish": "./post-publish2npm.sh",
     "test": "jest --coverage",
     "test:server": "jest --coverage --watch",
@@ -32,6 +33,10 @@
     {
       "name": "Caleb Eno",
       "url": "https://github.com/calebeno"
+    },
+    {
+      "name": "Aaditya Thakkar",
+      "url": "https://github.com/aaditya-thakkar"
     }
   ],
   "license": "MIT",
