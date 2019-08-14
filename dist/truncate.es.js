@@ -1,5 +1,5 @@
 /*!
- * trancate-html v1.0.2
+ * trancate-html v1.0.3
  * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
  */
 import { load } from 'cheerio';
