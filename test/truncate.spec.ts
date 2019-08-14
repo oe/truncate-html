@@ -183,10 +183,21 @@ describe('Truncate html', () => {
 
       it('should reserve the last word if at the boundary', () => {
         const test = '<p>Hello world from earth</p>'
-        const expected = '<p>Hello world ...</p>'
+        const expected = '<p>Hello world...</p>'
 
         expect(
           truncate(test, 11, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
+      })
+
+      // from issue #24
+      it('should cut correctly if string\'s length is equal to the truncation length', () => {
+        const test = '<p>a b c d ef</p>'
+        const expected = '<p>a b c d ef</p>'
+        expect(
+          truncate(test, 10, {
             reserveLastWord: -1 // exceed 10 letters
           })
         ).toBe(expected)
@@ -246,7 +257,7 @@ describe('Truncate html', () => {
   describe('with options.byWords', () => {
     it('should truncate by words', () => {
       const html = '<p><img src="abc.png">This is a string do</p> for test.'
-      const expected = '<p><img src="abc.png">This is a string ...</p>'
+      const expected = '<p><img src="abc.png">This is a string...</p>'
       const options = {
         byWords: true
       }
@@ -264,7 +275,7 @@ describe('Truncate html', () => {
 
     it('should works well when truncate at tag boundary', () => {
       const test = 'Hello <b>world</b>'
-      const expected = 'Hello ...'
+      const expected = 'Hello...'
       const options = {
         byWords: true
       }
@@ -294,7 +305,7 @@ describe('Truncate html', () => {
 
       it('should ignore reserveLastWord when byWords is on(length smaller)', () => {
         const html = '<p><img src="abc.png">This is a string do</p> for test.'
-        const expected = '<p><img src="abc.png">This is a ...</p>'
+        const expected = '<p><img src="abc.png">This is a...</p>'
         const options = {
           byWords: true,
           reserveLastWord: true
@@ -308,7 +319,7 @@ describe('Truncate html', () => {
     it('should trim whitespaces', () => {
       const html =
         '<p>         <img src="abc.png">This is a string</p> for test.'
-      const expected = '<p> <img src="abc.png">This is a ...</p>'
+      const expected = '<p> <img src="abc.png">This is a...</p>'
       const options = {
         keepWhitespaces: false
       }
@@ -319,12 +330,34 @@ describe('Truncate html', () => {
     it('should preserve whitespaces', () => {
       const html =
         '<p>         <img src="abc.png">This is a string</p> for test.'
-      const expected = '<p>         <img src="abc.png">This is a ...</p>'
+      const expected = '<p>         <img src="abc.png">This is a...</p>'
       const options = {
         keepWhitespaces: true
       }
 
       expect(truncate(html, 10, options)).toBe(expected)
+    })
+
+    it('should preserve last whitespace at boundary', () => {
+      const html =
+        '<p>Hello         image. <img src="abc.png">This is   a string</p> for test.'
+      const expected = '<p>Hello         image. <img src="abc.png">This is   ...</p>'
+      const options = {
+        keepWhitespaces: true
+      }
+
+      expect(truncate(html, 21, options)).toBe(expected)
+    })
+
+    it('should count continuous whitespaces as one', () => {
+      const html =
+        '<p>Hello         image. <img src="abc.png">This is a string</p> for test.'
+      const expected = '<p>Hello         image. <img src="abc.png">This is...</p>'
+      const options = {
+        keepWhitespaces: true
+      }
+
+      expect(truncate(html, 20, options)).toBe(expected)
     })
   })
 
@@ -422,7 +455,7 @@ describe('Truncate html', () => {
     it('should exclude multiple elements by selector', () => {
       const html =
         '<p><img src="abc.png">This is a string</p><div class="something-unwanted"> unwanted string inserted ( ´•̥̥̥ω•̥̥̥` ）</div> for test.'
-      const expected = '<p>This is a string</p> for ...'
+      const expected = '<p>This is a string</p> for...'
       const options = {
         length: 20,
         excludes: ['img', '.something-unwanted']
@@ -501,6 +534,7 @@ describe('Truncate html', () => {
       })
     })
     it('should works well if setup with empty', () => {
+      // @ts-ignore
       truncate.setup()
       const test = 'hello from earth'
       const expected = 'hello from e...'
@@ -519,7 +553,7 @@ describe('Truncate html', () => {
     it('should use default byWords settings', () => {
       truncate.setup({ byWords: true })
       const test = 'hello from earth'
-      const expected = 'hello from ...'
+      const expected = 'hello from...'
 
       expect(truncate(test, 2)).toBe(expected)
     })

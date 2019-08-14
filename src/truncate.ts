@@ -153,7 +153,7 @@ const helper = {
     const byWords = this.options.byWords
     const match = text.match(astralRange)
     const astralSafeCharacterArray = match === null ? [] : match
-    const strLen =  match === null ? 0 : astralSafeCharacterArray.length
+    const strLen = match === null ? 0 : astralSafeCharacterArray.length
     let idx = 0
     let count = 0
     let prevIsBlank = byWords
@@ -163,8 +163,8 @@ const helper = {
       // keep same then continue
       if (byWords && prevIsBlank === curIsBlank) continue
       if (count === this.limit) {
-        // reserve trailing whitespace
-        if (curIsBlank) {
+        // reserve trailing whitespace, only when prev is blank too
+        if (prevIsBlank && curIsBlank) {
           prevIsBlank = curIsBlank
           continue
         }
@@ -202,7 +202,7 @@ const helper = {
   substr (astralSafeCharacterArray, len) {
     // var boundary, cutted, result
     const cutted = astralSafeCharacterArray.slice(0, len).join('')
-    if (!this.reserveLastWord) {
+    if (!this.reserveLastWord || astralSafeCharacterArray.length === len) {
       return cutted
     }
     const boundary = astralSafeCharacterArray.slice(len - 1, len + 1).join('')
