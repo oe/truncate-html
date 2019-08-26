@@ -219,7 +219,7 @@ const helper = {
       }
     }
 
-    // set max exceeded to 10 if this.reserveLastWord is true or > 0
+    // set max exceeded to 10 if this.reserveLastWord is true or < 0
     const maxExceeded =
       this.reserveLastWord !== true && this.reserveLastWord > 0
         ? this.reserveLastWord
