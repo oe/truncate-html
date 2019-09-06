@@ -170,6 +170,18 @@ describe('Truncate html', () => {
         ).toBe(expected)
       })
 
+      it('should cut the only word if trimTheOnlyWord true', () => {
+        const test = '<p>internationalization</p>'
+        const expected = '<p>interna...</p>'
+
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: -1, // exceed 10 letters
+            trimTheOnlyWord: true
+          })
+        ).toBe(expected)
+      })
+
       it('should reserve the last word if only one word $', () => {
         const test = cheerio.load('<p>internationalization</p>')
         const expected = '<p>internationalizat...</p>'
@@ -188,6 +200,18 @@ describe('Truncate html', () => {
         expect(
           truncate(test, 11, {
             reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
+      })
+
+      it('should reserve the last word if at the boundary even trimTheOnlyWord is true ', () => {
+        const test = '<p>Hello world from earth</p>'
+        const expected = '<p>Hello world...</p>'
+
+        expect(
+          truncate(test, 11, {
+            reserveLastWord: -1, // exceed 10 letters
+            trimTheOnlyWord: true
           })
         ).toBe(expected)
       })

@@ -58,6 +58,11 @@ Click **<https://npm.runkit.com/truncate-html>** to try.
  *                                2. set it to true, with max exceed 10 letters can exceed to reserver the last word
  *                                3. set it to a positive number decide how many letters can exceed to reserve the last word
  *                                4. set it to negetive number to remove the last word if cut in the middle.
+ * @param  {Boolean}        [options.trimTheOnlyWord] whether to trim the only word when `reserveLastWord` < 0
+ *                                if reserveLastWord set to negetive number, and there is only one word in the html string,
+ *                                 when trimTheOnlyWord set to true, the extra letters will be cutted if word's length longer
+ *                                 than `length`.
+ *                                see issue #23 for more details
  * @param  {Boolean}        [options.keepWhitespaces] keep whitespaces, by default continuous
  *                                spaces will be replaced with one space
  *                                set it true to reserve them, and continuous spaces will count as one

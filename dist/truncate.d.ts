@@ -36,6 +36,11 @@ export interface IFullOptions {
      */
     reserveLastWord: boolean | number;
     /**
+     * if reserveLastWord set to negetive number, and there is only one word in the html string,  when trimTheOnlyWord set to true, the extra letters will be cutted if word's length longer than `length`.
+     * see issue #23 for more details
+     */
+    trimTheOnlyWord: boolean;
+    /**
      * keep whitespaces, by default continuous paces will
      *  be replaced with one space, set it true to keep them
      */

@@ -26,10 +26,10 @@ import * as cheerio from 'cheerio'
 
 let str = 'demo'
 str = '<p>a b c d ef</p>'
-console.log(truncate(str, { length: 10, reserveLastWord: -1, ellipsis: '..' }))
+// console.log(truncate(str, { length: 10, reserveLastWord: -1, ellipsis: '..' }))
 
-str = '<p>a b c d ef gh</p>'
-console.log(truncate(str, { length: 10, reserveLastWord: -1, ellipsis: '...' }))
+str = '<p>1234567890</p>'
+console.log(truncate(str, { length: 5, reserveLastWord: -1, trimTheOnlyWord: true, ellipsis: '...' }))
 
 // const testString = '123456<div>7</div><div>89</div>12'
 

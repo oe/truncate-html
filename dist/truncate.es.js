@@ -19,6 +19,7 @@ var defaultOptions = {
     // length: 0
     excludes: '',
     reserveLastWord: false,
+    trimTheOnlyWord: false,
     keepWhitespaces: false // even if set true, continuous whitespace will count as one
 };
 var astralRange = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g;
@@ -52,6 +53,7 @@ var helper = {
         this.ellipsis = fullOptions.ellipsis;
         this.keepWhitespaces = fullOptions.keepWhitespaces;
         this.reserveLastWord = fullOptions.reserveLastWord;
+        this.trimTheOnlyWord = fullOptions.trimTheOnlyWord;
     },
     // extend obj with dft
     extend: function extend(obj, dft) {
@@ -162,8 +164,10 @@ var helper = {
             if (!(result.length === 0 && cutted.length === this.options.length)) {
                 return result;
             }
+            if (this.trimTheOnlyWord)
+                { return cutted; }
         }
-        // set max exceeded to 10 if this.reserveLastWord is true or > 0
+        // set max exceeded to 10 if this.reserveLastWord is true or < 0
         var maxExceeded = this.reserveLastWord !== true && this.reserveLastWord > 0
             ? this.reserveLastWord
             : 10;

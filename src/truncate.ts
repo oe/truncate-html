@@ -37,6 +37,11 @@ export interface IFullOptions {
    */
   reserveLastWord: boolean | number
   /**
+   * if reserveLastWord set to negetive number, and there is only one word in the html string,  when trimTheOnlyWord set to true, the extra letters will be cutted if word's length longer than `length`.
+   * see issue #23 for more details
+   */
+  trimTheOnlyWord: boolean
+  /**
    * keep whitespaces, by default continuous paces will
    *  be replaced with one space, set it true to keep them
    */
@@ -54,6 +59,7 @@ interface IHelper {
   ellipsis: IFullOptions['ellipsis']
   keepWhitespaces: IFullOptions['keepWhitespaces']
   reserveLastWord: IFullOptions['reserveLastWord']
+  trimTheOnlyWord: IFullOptions['trimTheOnlyWord']
   setup (len: number, options?: IOptions): void
   setup (options: IOptions): void
   extend (a: any, b: any): any
@@ -77,6 +83,7 @@ const defaultOptions: IOptions = {
   // length: 0
   excludes: '', // remove tags
   reserveLastWord: false, // keep word completed if truncate at the middle of the word, works no matter byWords is true/false
+  trimTheOnlyWord: false,
   keepWhitespaces: false // even if set true, continuous whitespace will count as one
 }
 
@@ -111,6 +118,7 @@ const helper = {
     this.ellipsis = fullOptions.ellipsis
     this.keepWhitespaces = fullOptions.keepWhitespaces
     this.reserveLastWord = fullOptions.reserveLastWord
+    this.trimTheOnlyWord = fullOptions.trimTheOnlyWord
   },
   // extend obj with dft
   extend (obj, dft) {
@@ -217,6 +225,7 @@ const helper = {
       if (!(result.length === 0 && cutted.length === this.options.length)) {
         return result
       }
+      if (this.trimTheOnlyWord) return cutted
     }
 
     // set max exceeded to 10 if this.reserveLastWord is true or < 0
