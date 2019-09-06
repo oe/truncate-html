@@ -90,8 +90,6 @@ var helper = {
      * @return {String}
      */
     truncate: function truncate(text, isLastNode) {
-        var this$1 = this;
-
         if (!this.keepWhitespaces) {
             text = text.replace(/\s+/g, ' ');
         }
@@ -104,11 +102,11 @@ var helper = {
         var prevIsBlank = byWords;
         var curIsBlank = false;
         while (idx < strLen) {
-            curIsBlank = this$1.isBlank(astralSafeCharacterArray[idx++]);
+            curIsBlank = this.isBlank(astralSafeCharacterArray[idx++]);
             // keep same then continue
             if (byWords && prevIsBlank === curIsBlank)
                 { continue; }
-            if (count === this$1.limit) {
+            if (count === this.limit) {
                 // reserve trailing whitespace, only when prev is blank too
                 if (prevIsBlank && curIsBlank) {
                     prevIsBlank = curIsBlank;

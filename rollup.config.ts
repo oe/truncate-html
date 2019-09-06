@@ -3,22 +3,33 @@ import typescript from 'rollup-plugin-typescript2'
 
 const pkg = require('./package.json')
 
-function getConfig (type) {
+function getConfig () {
   return {
     input: 'src/truncate.ts',
-    output: {
+    output: [{
       name: 'truncate-html',
       banner: `/*!
  * trancate-html v${pkg.version}
  * Copyright© ${new Date().getFullYear()} Saiya ${pkg.homepage}
  */`,
-      format: type,
-      file: `dist/truncate.${type}.js`
-    },
+      format: 'cjs',
+      file: `dist/truncate.cjs.js`
+    }, {
+      name: 'truncate-html',
+      banner: `/*!
+ * trancate-html v${pkg.version}
+ * Copyright© ${new Date().getFullYear()} Saiya ${pkg.homepage}
+ */`,
+      format: 'es',
+      file: `dist/truncate.es.js`
+    }],
     plugins: [
       typescript({
         tsconfigOverride: {
-          compilerOptions: { module: 'esnext' }
+          compilerOptions: {
+            declaration: true,
+            module: 'esnext'
+          }
         },
         typescript: require('typescript')
       }),
@@ -28,7 +39,4 @@ function getConfig (type) {
   }
 }
 
-export default [
-  getConfig('cjs'),
-  getConfig('es')
-]
+export default getConfig()

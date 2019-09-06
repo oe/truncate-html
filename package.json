@@ -52,17 +52,17 @@
     "@types/jest": "^23.3.1",
     "@types/node": "^10.5.5",
     "buble": "0.18.0",
-    "jest": "22.1.4",
+    "jest": "^24.9.0",
     "rimraf": "2.6.2",
     "rollup": "0.55.3",
-    "rollup-plugin-buble": "0.18.0",
-    "rollup-plugin-typescript2": "^0.16.1",
-    "ts-jest": "^23.0.1",
+    "rollup-plugin-buble": "^0.19.8",
+    "rollup-plugin-typescript2": "0.18",
+    "ts-jest": "^24.0.2",
     "ts-node": "^7.0.1",
     "tslint": "^5.11.0",
     "tslint-config-prettier": "^1.14.0",
     "tslint-config-standard": "^7.1.0",
-    "typescript": "^3.0.1"
+    "typescript": "^3.6.2"
   },
   "jest": {
     "transform": {

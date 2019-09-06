@@ -4,6 +4,7 @@ import * as cheerio from 'cheerio'
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {
     it('should NOT truncate a string if no string provided', () => {
+      // @ts-ignore
       expect(truncate(null)).toBe(null)
     })
 
@@ -550,6 +551,7 @@ describe('Truncate html', () => {
         byWords: false,
         stripTags: false,
         ellipsis: '...',
+        // @ts-ignore
         length: null,
         decodeEntities: false,
         keepWhitespaces: false,
