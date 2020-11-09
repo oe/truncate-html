@@ -2,8 +2,8 @@
 
 <h5 align="center"> Truncate html string(even contains emoji chars) and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
 <div align="center">
-  <a href="https://travis-ci.org/evecalm/truncate-html">
-    <img src="https://travis-ci.org/evecalm/truncate-html.svg?branch=master" alt="Travis CI">
+  <a href="https://travis-ci.org/oe/truncate-html">
+    <img src="https://travis-ci.org/oe/truncate-html.svg?branch=master" alt="Travis CI">
   </a>
   <a href="#readme">
     <img src="https://badges.frapsoft.com/typescript/code/typescript.svg?v=101" alt="code with typescript" height="20">
@@ -118,7 +118,16 @@ truncate($)
 
 ### Typescript support
 
-This lib is written with typescript and has a defination file along with it. You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see #19.
+This lib is written with typescript and has a defination file along with it. You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see [#19](https://github.com/oe/truncate-html/issues/19).
+
+```json
+{
+  "compilerOptions": {
+    "esModuleInterop": true
+  }
+}
+```
+
 
 ### About final string length
 
@@ -139,10 +148,13 @@ And the only dependency of this project `cheerio` has an issue when dealing with
 If you want to use existing cheerio instance, truncate option `decodeEntities` will not work, you should set it in your own cheerio instance:
 
 ```js
+var html = '<p><img src="abc.png">This is a string</p> for test.'
 const $ = cheerio.load(`${html}`, {
   decodeEntities: true
   /** other cheerio options */
 })
+truncate($, 10)
+
 ```
 
 ## Examples
