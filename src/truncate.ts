@@ -1,5 +1,5 @@
-import * as cheerio from 'cheerio'
-
+import cheerio from 'cheerio'
+type CheerioStatic = ReturnType<typeof cheerio['load']>
 /**
  * truncate-html full options object
  */

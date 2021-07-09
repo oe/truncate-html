@@ -1,10 +1,12 @@
 /*!
  * trancate-html v1.0.3
- * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
+ * Copyright© 2021 Saiya https://github.com/evecalm/truncate-html#readme
  */
 'use strict';
 
-var cheerio = require('cheerio');
+function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
+
+var cheerio = _interopDefault(require('cheerio'));
 
 // default options
 var defaultOptions = {

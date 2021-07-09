@@ -1,5 +1,5 @@
 import truncate from '../src/truncate'
-import * as cheerio from 'cheerio'
+import cheerio from 'cheerio'
 
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {

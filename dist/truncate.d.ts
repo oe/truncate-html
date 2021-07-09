@@ -1,4 +1,5 @@
-/// <reference types="cheerio" />
+import cheerio from 'cheerio';
+declare type CheerioStatic = ReturnType<typeof cheerio['load']>;
 /**
  * truncate-html full options object
  */

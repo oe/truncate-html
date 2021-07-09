@@ -1,8 +1,8 @@
 /*!
  * trancate-html v1.0.3
- * Copyright© 2019 Saiya https://github.com/evecalm/truncate-html#readme
+ * Copyright© 2021 Saiya https://github.com/evecalm/truncate-html#readme
  */
-import { load } from 'cheerio';
+import cheerio from 'cheerio';
 
 // default options
 var defaultOptions = {
@@ -206,7 +206,7 @@ var truncate = function (html, length, options) {
     else {
         // Add a wrapper for text node without tag like:
         //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
-        $ = load(("" + html), {
+        $ = cheerio.load(("" + html), {
             decodeEntities: helper.options.decodeEntities
         });
     }
