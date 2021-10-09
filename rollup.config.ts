@@ -9,16 +9,16 @@ function getConfig () {
     output: [{
       name: 'truncate-html',
       banner: `/*!
- * trancate-html v${pkg.version}
- * Copyright© ${new Date().getFullYear()} Saiya ${pkg.homepage}
+ * ${pkg.name} v${pkg.version}
+ * Copyright© ${new Date().getFullYear()} ${pkg.author.name} ${pkg.homepage}
  */`,
       format: 'cjs',
       file: `dist/truncate.cjs.js`
     }, {
       name: 'truncate-html',
       banner: `/*!
- * trancate-html v${pkg.version}
- * Copyright© ${new Date().getFullYear()} Saiya ${pkg.homepage}
+ * ${pkg.name} v${pkg.version}
+ * Copyright© ${new Date().getFullYear()} ${pkg.author.name} ${pkg.homepage}
  */`,
       format: 'es',
       file: `dist/truncate.es.js`
