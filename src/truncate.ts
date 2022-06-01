@@ -292,10 +292,10 @@ const truncate = function (html: string | CheerioStatic, length?: any, options?:
   if (helper.options.stripTags) {
     return helper.truncate($html.text())
   }
-  const travelChildren = function ($ele: Cheerio, isParentLastNode = true) {
+  const travelChildren = function ($ele, isParentLastNode = true) {
     const contents = $ele.contents()
     const lastIdx = contents.length - 1
-    return contents.each(function (this: CheerioElement, idx) {
+    return contents.each(function (this, idx) {
       switch (this.type) {
         case 'text':
           if (!helper.limit) {
