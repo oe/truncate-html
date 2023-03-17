@@ -131,7 +131,7 @@ This lib is written with typescript and has a defination file along with it. You
 
 ### About final string length
 
-If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true of none zero number, the final string will be various.
+If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true or none zero number, the final string will be various.
 
 ### About html comments
 
