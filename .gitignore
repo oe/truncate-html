@@ -9,3 +9,5 @@ npm-debug.log
 .idea
 .vscode
 .rpt2_cache
+.parcel-cache
+dist

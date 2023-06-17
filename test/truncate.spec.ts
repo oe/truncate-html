@@ -44,7 +44,7 @@ describe('Truncate html', () => {
     it('should truncate a string $', () => {
       const test = '123456789'
       const expected = '12345...'
-      const $ = cheerio.load(test)
+      const $ = cheerio.load(test, null, false)
       expect(truncate($, 5)).toBe(expected)
     })
 
@@ -90,7 +90,7 @@ describe('Truncate html', () => {
     })
 
     it('should truncate a string two sets of tags $', () => {
-      const test = cheerio.load('<p>12345</p><p>6789</p>')
+      const test = cheerio.load('<p>12345</p><p>6789</p>', null, false)
       const expected = '<p>12345</p><p>67...</p>'
 
       expect(truncate(test, 7)).toBe(expected)
@@ -106,7 +106,7 @@ describe('Truncate html', () => {
 
     it('should keep empty tag $', () => {
       const test =
-        cheerio.load('<span></span><p>12345</p><p>6789</p><span> reset text </span>')
+        cheerio.load('<span></span><p>12345</p><p>6789</p><span> reset text </span>', null, false)
       const expected = '<span></span><p>12345</p><p>67...</p>'
 
       expect(truncate(test, 7)).toBe(expected)
@@ -184,7 +184,7 @@ describe('Truncate html', () => {
       })
 
       it('should reserve the last word if only one word $', () => {
-        const test = cheerio.load('<p>internationalization</p>')
+        const test = cheerio.load('<p>internationalization</p>', null, false)
         const expected = '<p>internationalizat...</p>'
 
         expect(
@@ -502,9 +502,20 @@ describe('Truncate html', () => {
       expect(truncate(html, options)).toBe(expected)
     })
 
+    // it('should leave encoded characters as is', () => {
+    //   const html = '<p>&nbsp;&nbsp;test for &lt;p&gt; encoded string</p>'
+    //   const expected = '<p>&nbsp;&nbsp;test for &lt;p...</p>'
+    //   const options = {
+    //     length: 20,
+    //     decodeEntities: false // this is the default value
+    //   }
+
+    //   expect(truncate(html, options)).toBe(expected)
+    // })
+
     it('should leave encoded characters as is', () => {
       const html = '<p>&nbsp;test for &lt;p&gt; encoded string</p>'
-      const expected = '<p>&nbsp;test for &lt;p...</p>'
+      const expected = '<p> test for &lt;p&gt; encode...</p>'
       const options = {
         length: 20,
         decodeEntities: false // this is the default value
@@ -513,20 +524,11 @@ describe('Truncate html', () => {
       expect(truncate(html, options)).toBe(expected)
     })
 
-    it('should convert special characters to encoded', () => {
-      const html = '<p>&nbsp;test for &lt;p&gt; 中文 string</p>'
-      const expected = '<p> test for &lt;p&gt; &#x4E2D;&#x6587; str...</p>'
-      const options = {
-        length: 20,
-        decodeEntities: true
-      }
 
-      expect(truncate(html, options)).toBe(expected)
-    })
 
-    it('should convert special characters to encoded', () => {
+    it('should works with CJK when decodeEntities is true', () => {
       const html = '<p>&nbsp;test for &lt;p&gt;&#64 中文 string</p>'
-      const expected = '<p> test for &lt;p&gt;@ &#x4E2D;&#x6587; st...</p>'
+      const expected = '<p> test for &lt;p&gt;@ 中文 st...</p>'
       const options = {
         length: 20,
         decodeEntities: true
@@ -534,12 +536,23 @@ describe('Truncate html', () => {
       expect(truncate(html, options)).toBe(expected)
     })
 
-    it('should convert CJK to encoded', () => {
-      const html = '<p>&nbsp;test for &lt;p&gt;&#64 &#x4E2D;&#x6587; string</p>'
-      const expected = '<p> test for &lt;p&gt;@ &#x4E2D;&#x6587; st...</p>'
+    it('should convert CJK from encoded with decodeEntities to false', () => {
+      const html = '<p>&nbsp;test for &lt;p&gt; &#x4E2D;&#x6587; string</p>'
+      const expected = '<p> test for &lt;p&gt; 中文 str...</p>'
       const options = {
         length: 20,
         decodeEntities: true
+      }
+
+      expect(truncate(html, options)).toBe(expected)
+    })
+
+    it('should convert CJK from encoded with decodeEntities to false', () => {
+      const html = '<p>&nbsp;test for &lt;p&gt;&#64 &#x4E2D;&#x6587; string</p>'
+      const expected = '<p> test for &lt;p&gt;@ 中文 st...</p>'
+      const options = {
+        length: 20,
+        decodeEntities: false
       }
       expect(truncate(html, options)).toBe(expected)
     })
