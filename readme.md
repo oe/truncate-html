@@ -2,8 +2,8 @@
 
 <h5 align="center"> Truncate html string(even contains emoji chars) and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
 <div align="center">
-  <a href="https://travis-ci.org/oe/truncate-html">
-    <img src="https://travis-ci.org/oe/truncate-html.svg?branch=master" alt="Travis CI">
+  <a href="https://github.com/oe/truncate-html/actions/workflows/main.yml">
+    <img src="https://github.com/oe/truncate-html/actions/workflows/main.yml/badge.svg" alt="Github Actions">
   </a>
   <a href="#readme">
     <img src="https://badges.frapsoft.com/typescript/code/typescript.svg?v=101" alt="code with typescript" height="20">
