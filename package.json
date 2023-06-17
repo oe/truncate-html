@@ -40,7 +40,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://evecalm@github.com/evecalm/truncate-html.git"
+    "url": "git+https://oe@github.com/oe/truncate-html.git"
   },
   "keywords": [
     "truncate html",
@@ -49,7 +49,7 @@
   ],
   "author": {
     "name": "Saiya",
-    "url": "https://github.com/evecalm"
+    "url": "https://github.com/oe"
   },
   "contributors": [
     {
@@ -63,7 +63,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/evecalm/truncate-html/issues"
+    "url": "https://github.com/oe/truncate-html/issues"
   },
-  "homepage": "https://github.com/evecalm/truncate-html#readme"
+  "homepage": "https://github.com/oe/truncate-html#readme"
 }
