@@ -328,4 +328,7 @@ truncate.setup = (options = {}) => {
   return Object.assign(defaultOptions, options)
 }
 
-export default truncate
+// fix parcel exporting issue
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export = truncate

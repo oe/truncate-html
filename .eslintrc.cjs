@@ -6,5 +6,6 @@ module.exports = {
   env: {
     node: true,
   },
+  ignorePatterns: ['scripts'],
   root: true,
 }

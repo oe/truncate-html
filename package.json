@@ -13,6 +13,7 @@
     "dev": "ts-node ./test/demo.ts",
     "prebuild": "npm run test && npm run lint && npm run clean",
     "build": "parcel build src/truncate.ts --no-source-maps",
+    "postbuild": "node ./scripts/post-build.js",
     "clean": "rimraf dist/*",
     "prepublish": "npm run build",
     "test": "jest",
