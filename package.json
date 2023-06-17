@@ -1,6 +1,6 @@
 {
   "name": "truncate-html",
-  "version": "1.0.4",
+  "version": "1.0.5-beta.1",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
