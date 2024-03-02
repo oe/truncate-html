@@ -2,17 +2,17 @@
 
 <h5 align="center"> Truncate html string(even contains emoji chars) and keep tags in safe. You can custom ellipsis sign, ignore unwanted elements and truncate html by words. </h5>
 <div align="center">
-  <a href="https://travis-ci.org/oe/truncate-html">
-    <img src="https://travis-ci.org/oe/truncate-html.svg?branch=master" alt="Travis CI">
+  <a href="https://github.com/oe/truncate-html/actions/workflows/main.yml">
+    <img src="https://github.com/oe/truncate-html/actions/workflows/main.yml/badge.svg" alt="Github Actions">
   </a>
   <a href="#readme">
-    <img src="https://badges.frapsoft.com/typescript/code/typescript.svg?v=101" alt="code with typescript" height="20">
+    <img src="https://img.shields.io/badge/%3C%2F%3E-typescript-blue" alt="code with typescript">
   </a>
   <a href="#readme">
-    <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version" height="18">
+    <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version">
   </a>
   <a href="https://www.npmjs.com/package/truncate-html">
-    <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm version" height="18">
+    <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm downloads">
   </a>
 </div>
 
@@ -118,16 +118,7 @@ truncate($)
 
 ### Typescript support
 
-This lib is written with typescript and has a defination file along with it. You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see [#19](https://github.com/oe/truncate-html/issues/19).
-
-```json
-{
-  "compilerOptions": {
-    "esModuleInterop": true
-  }
-}
-```
-
+This lib is written with typescript and has a type definition file along with it. ~~You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see [#19](https://github.com/oe/truncate-html/issues/19).~~
 
 ### About final string length
 
@@ -203,7 +194,7 @@ truncate(html, {
   length: 10,
   ellipsis: '~'
 })
-// reutrns: <p><img src="abc.png">This is a ~</p>
+// returns: <p><img src="abc.png">This is a ~</p>
 
 // exclude some special elements(by selector), they will be removed before counting content's length
 var html = '<p><img src="abc.png">This is a string</p> for test.'
@@ -212,7 +203,7 @@ truncate(html, {
   ellipsis: '~',
   excludes: 'img'
 })
-// reutrns: <p>This is a ~</p>
+// returns: <p>This is a ~</p>
 
 // exclude more than one category elements
 var html =
@@ -237,7 +228,7 @@ truncate(html, {
 var html = '<p>&nbsp;test for &lt;p&gt; encoded string</p>'
 truncate(html, {
   length: 20,
-  decodeEntities: false // this is the dafault value
+  decodeEntities: false // this is the default value
 })
 // returns: <p>&nbsp;test for &lt;p...</p>
 
@@ -252,17 +243,6 @@ truncate(html, {
 ```
 
 for More usages, check [truncate.spec.ts](./test/truncate.spec.ts)
-
-## Known issues
-
-Known issues about handing CJK(Chinese/Japanese/Korean) characters when set the option `decodeEntities` to `true`.
-
-You have seen the option `decodeEntities`, it's really magic! When it's true, encoded html entities will be decoded automatically, so `&amp;` will be treat as a single character. This is probably what we want. But, if there are CJK characters in the html string, they will be replaced by characters like `&#xF6;`(still count as one character when truncating) in the final html you get. That's confused.
-
-To fix this, you have two choices:
-
-- keep the option `decodeEntities` false, but `&amp;` will treat as five characters.
-- modify cheerio's source code: find out the function `getInverse` in the file `./node_modules/cheerio/node_modules/entities/lib/decode.js`, comment out the last line `.replace(re_nonASCII, singleCharReplacer);`.
 
 ## Credits
 

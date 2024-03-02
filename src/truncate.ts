@@ -1,5 +1,5 @@
-import cheerio from 'cheerio'
-type CheerioStatic = ReturnType<typeof cheerio['load']>
+import cheerio, { CheerioAPI, Cheerio, AnyNode } from 'cheerio'
+// type CheerioAPI = ReturnType<typeof cheerio['load']>
 /**
  * truncate-html full options object
  */
@@ -87,7 +87,7 @@ const defaultOptions: IOptions = {
   keepWhitespaces: false // even if set true, continuous whitespace will count as one
 }
 
-const astralRange: RegExp = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g
+const astralRange = /\ud83c[\udffb-\udfff](?=\ud83c[\udffb-\udfff])|(?:[^\ud800-\udfff][\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]?|[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff]|[\ud800-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?(?:\u200d(?:[^\ud800-\udfff]|(?:\ud83c[\udde6-\uddff]){2}|[\ud800-\udbff][\udc00-\udfff])[\ufe0e\ufe0f]?(?:[\u0300-\u036f\ufe20-\ufe23\u20d0-\u20f0]|\ud83c[\udffb-\udfff])?)*/g
 
 // helper method
 const helper = {
@@ -218,7 +218,7 @@ const helper = {
     if (/\W/.test(boundary)) {
       return cutted
     }
-    if (this.reserveLastWord < 0) {
+    if (typeof this.reserveLastWord === 'number' && this.reserveLastWord < 0) {
       const result = cutted.replace(/\w+$/, '')
       // if the cutted is not the first and the only word
       //   then return result, or return the whole word
@@ -240,7 +240,7 @@ const helper = {
 } as IHelper
 
 /** return true if elem is CheerioStatic */
-function isCheerioInstance (elem: any) {
+function isCheerioInstance (elem: any): elem is CheerioAPI {
   return elem &&
     elem.contains &&
     elem.html &&
@@ -251,8 +251,8 @@ function isCheerioInstance (elem: any) {
  * truncate html interface
  */
 interface ITruncateHtml {
-  (html: string | CheerioStatic, length?: number, options?: IOptions): string
-  (html: string | CheerioStatic, options?: IOptions): string
+  (html: string | CheerioAPI, length?: number, options?: IOptions): string
+  (html: string | CheerioAPI, options?: IOptions): string
   setup: (option: IOptions) => void
 }
 
@@ -264,7 +264,7 @@ interface ITruncateHtml {
  * @param  {Object|null}    options
  * @return {String}
  */
-const truncate = function (html: string | CheerioStatic, length?: any, options?: any) {
+const truncate = function (html: string | CheerioAPI, length?: any, options?: any) {
   helper.setup(length, options)
   if (!html ||
     isNaN(helper.limit) ||
@@ -274,16 +274,16 @@ const truncate = function (html: string | CheerioStatic, length?: any, options?:
   }
 
   // if (helper.limit)
-  let $: CheerioStatic
+  let $: CheerioAPI
   // support provied cheerio
   if (isCheerioInstance(html)) {
-    $ = html as CheerioStatic
+    $ = html as CheerioAPI
   } else {
     // Add a wrapper for text node without tag like:
     //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
     $ = cheerio.load(`${html}`, {
       decodeEntities: helper.options.decodeEntities
-    })
+    }, false)
   }
   const $html = $.root()
   // remove excludes elements
@@ -292,10 +292,10 @@ const truncate = function (html: string | CheerioStatic, length?: any, options?:
   if (helper.options.stripTags) {
     return helper.truncate($html.text())
   }
-  const travelChildren = function ($ele: Cheerio, isParentLastNode = true) {
+  const travelChildren = function ($ele: Cheerio<AnyNode>, isParentLastNode = true) {
     const contents = $ele.contents()
     const lastIdx = contents.length - 1
-    return contents.each(function (this: CheerioElement, idx) {
+    return contents.each(function (this: AnyNode, idx) {
       switch (this.type) {
         case 'text':
           if (!helper.limit) {
@@ -328,4 +328,7 @@ truncate.setup = (options = {}) => {
   return Object.assign(defaultOptions, options)
 }
 
-export default truncate
+// fix parcel exporting issue
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export = truncate
