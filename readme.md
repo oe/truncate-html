@@ -109,7 +109,7 @@ const $ = cheerio.load('<p><img src="xxx.jpg">Hello from earth!</p>', {
   /** set decodeEntities if you need it */
   decodeEntities: true
   /* any cheerio instance options*/
-}, false)
+}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
 truncate($)
 // => Hello from
 ```
@@ -143,7 +143,7 @@ var html = '<p><img src="abc.png">This is a string</p> for test.'
 const $ = cheerio.load(`${html}`, {
   decodeEntities: true
   /** other cheerio options */
-})
+}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
 truncate($, 10)
 
 ```
