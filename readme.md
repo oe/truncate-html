@@ -6,13 +6,13 @@
     <img src="https://github.com/oe/truncate-html/actions/workflows/main.yml/badge.svg" alt="Github Actions">
   </a>
   <a href="#readme">
-    <img src="https://badges.frapsoft.com/typescript/code/typescript.svg?v=101" alt="code with typescript" height="20">
+    <img src="https://img.shields.io/badge/%3C%2F%3E-typescript-blue" alt="code with typescript">
   </a>
   <a href="#readme">
-    <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version" height="18">
+    <img src="https://badge.fury.io/js/truncate-html.svg" alt="npm version">
   </a>
   <a href="https://www.npmjs.com/package/truncate-html">
-    <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm version" height="18">
+    <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm downloads">
   </a>
 </div>
 
