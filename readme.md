@@ -109,7 +109,7 @@ const $ = cheerio.load('<p><img src="xxx.jpg">Hello from earth!</p>', {
   /** set decodeEntities if you need it */
   decodeEntities: true
   /* any cheerio instance options*/
-})
+}, false)
 truncate($)
 // => Hello from
 ```
