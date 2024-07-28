@@ -77,13 +77,13 @@ truncate.setup(options)
 
 ```js
 {
-  byWords: false,
   stripTags: false,
   ellipsis: '...',
   decodeEntities: false,
-  keepWhitespaces: false,
   excludes: '',
+  byWords: false,
   reserveLastWord: false,
+  trimTheOnlyWord: false,
   keepWhitespaces: false
 }
 ```
