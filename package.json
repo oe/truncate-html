@@ -21,7 +21,7 @@
     "lint": "eslint src --ext .ts"
   },
   "dependencies": {
-    "cheerio": "^1.0.0-rc.12"
+    "cheerio": "1.0.0-rc.12"
   },
   "devDependencies": {
     "@parcel/packager-ts": "^2.12.0",

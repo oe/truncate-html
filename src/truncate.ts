@@ -237,7 +237,7 @@ const helper = {
     const exceeded = mtc ? mtc[1] : ''
     return cutted + exceeded.substr(0, maxExceeded)
   }
-} as IHelper
+} as any as IHelper
 
 /** return true if elem is CheerioStatic */
 function isCheerioInstance (elem: any): elem is CheerioAPI {
