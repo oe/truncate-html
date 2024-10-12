@@ -42,7 +42,7 @@ Click **<https://npm.runkit.com/truncate-html>** to try.
 /**
  * custom node strategy, default to Cheerio<AnyNode>
  * * 'remove' to remove the node
- * * 'keep' to keep the node(and anything inside it) anyway
+ * * 'keep' to keep the node(and anything inside it) anyway, and won't be counted as there is no text content in it
  * * Cheerio<AnyNode> truncate the returned node
  * * undefined or any falsy value to truncate original node
  */
@@ -71,7 +71,7 @@ interface IFullOptions {
   /**
    * custom node strategy, default to Cheerio<AnyNode>
    * * 'remove' to remove the node
-   * * 'keep' to keep the node(and anything inside it) anyway
+   * * 'keep' to keep the node(and anything inside it) anyway, and won't be counted as there is no text content in it
    * * Cheerio<AnyNode> truncate the returned node
    * * undefined or any falsy value to truncate original node
    */
@@ -180,7 +180,7 @@ truncate(html, options)
 ### custom node truncate strategy
 In complex html string, you may want to keep some special elements and truncate the others. You can use `customNodeStrategy` to achieve this:
 * return `'remove'` to remove the node
-* `'keep'` to keep the node(and anything inside it) anyway
+* `keep` to keep the node(and anything inside it) anyway, and won't be counted as there is no text content in it
 * `Cheerio<AnyNode>` to truncate the returned node, or any falsy value to truncate the original node.
 
 ```ts
@@ -215,11 +215,9 @@ truncate(html, options)
 
 ```
 
-
-
 ### About final string length
 
-If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true or none zero number, the final string will be various.
+If the html string content's length is shorter than `options.length`, then no ellipsis will be appended to the final html string. If longer, then the final string length will be `options.length` + `options.ellipsis`. And if you set `reserveLastWord` to true or none zero number or using `customNodeStrategy`, the final string will be various.
 
 ### About html comments
 

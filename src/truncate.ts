@@ -3,7 +3,7 @@ import cheerio, { CheerioAPI, Cheerio, AnyNode } from 'cheerio'
 /**
  * custom node strategy, default to Cheerio<AnyNode>
  * * 'remove' to remove the node
- * * 'keep' to keep the node(and anything inside it) anyway
+ * * 'keep' to keep the node(and anything inside it) anyway, and won't be counted as there is no text content in it
  * * Cheerio<AnyNode> truncate the returned node
  * * undefined or any falsy value to truncate original node
  */
@@ -32,7 +32,7 @@ export interface IFullOptions {
   /**
    * custom node strategy, default to Cheerio<AnyNode>
    * * 'remove' to remove the node
-   * * 'keep' to keep the node(and anything inside it) anyway
+   * * 'keep' to keep the node(and anything inside it) anyway, and won't be counted as there is no text content in it
    * * Cheerio<AnyNode> truncate the returned node
    * * undefined or any falsy value to truncate original node
    */

@@ -88,3 +88,18 @@ console.log(truncate(html, options))
 
 // const expected = '123456...'
 // console.log(truncate(testString, 6))
+
+// argument node is a cheerio instance
+const customNodeStrategy2: ICustomNodeStrategy = node => {
+  // truncate summary tag that inside details tag instead of details tag
+  if (node.is('details')) {
+    return 'keep'
+  }
+}
+
+html = '<div><details><summary>Click me</summary><p>Some details</p></details>other things</div>'
+
+console.log(truncate(html,  {
+  length: 3,
+  customNodeStrategy: customNodeStrategy2
+}))
