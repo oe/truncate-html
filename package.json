@@ -17,7 +17,7 @@
   "scripts": {
     "dev": "tsx ./test/demo.ts",
     "build": "vite build",
-    "prepublish": "yarn run build",
+    "prepublish": "yarn test && yarn build",
     "test": "vitest --coverage",
     "test:server": "vitest --watch",
     "lint": "eslint src"
