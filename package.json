@@ -5,38 +5,37 @@
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
   "types": "dist/truncate.d.ts",
-  "source": "./src/truncate.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/truncate.es.js",
+      "require": "./dist/truncate.cjs.js"
+    }
+  },
   "files": [
     "dist"
   ],
   "scripts": {
-    "dev": "ts-node ./test/demo.ts",
-    "prebuild": "npm run test && npm run lint && npm run clean",
-    "build": "parcel build src/truncate.ts --no-source-maps",
-    "postbuild": "node ./scripts/post-build.js",
-    "clean": "rimraf dist/*",
-    "prepublish": "npm run build",
-    "test": "jest",
-    "test:server": "jest --watch",
-    "lint": "eslint src --ext .ts"
+    "dev": "tsx ./test/demo.ts",
+    "build": "vite build",
+    "prepublish": "yarn run build",
+    "test": "vitest --coverage",
+    "test:server": "vitest --watch",
+    "lint": "eslint src"
   },
   "dependencies": {
     "cheerio": "1.0.0-rc.12"
   },
   "devDependencies": {
-    "@parcel/packager-ts": "^2.12.0",
-    "@parcel/transformer-typescript-types": "^2.12.0",
-    "@types/jest": "^29.5.2",
-    "@types/node": "^20.3.1",
-    "@typescript-eslint/eslint-plugin": "^5.59.11",
-    "@typescript-eslint/parser": "^5.59.11",
-    "eslint": "^8.43.0",
-    "jest": "^29.5.0",
-    "parcel": "^2.12.0",
-    "rimraf": "^5.0.1",
-    "ts-jest": "^29.1.0",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.1.3"
+    "@eslint/js": "^9.12.0",
+    "@types/eslint__js": "^8.42.3",
+    "@vitest/coverage-v8": "2.1.2",
+    "eslint": "^9.12.0",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.8.1",
+    "vite": "^5.4.8",
+    "vite-plugin-dts": "^4.2.4",
+    "vitest": "^2.1.2"
   },
   "repository": {
     "type": "git",

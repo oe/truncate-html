@@ -38,39 +38,80 @@ Click **<https://npm.runkit.com/truncate-html>** to try.
 
 ## API
 
-```javascript
+```ts
 /**
- * truncate html
- * @method truncate(html, [length], [options])
- * @param  {String|CheerioStatic}         html    html string to truncate, or  existing cheerio instance(aka cheerio $)
- * @param  {Object|number}  length how many letters(words if `byWords` is true) you want reserve
- * @param  {Object|null}    options
- * @param  {Boolean}        [options.stripTags] remove all tags, default false
- * @param  {String}         [options.ellipsis] ellipsis sign, default '...'
- * @param  {Boolean}        [options.decodeEntities] decode html entities(e.g. convert `&amp;` to `&`) before
- *                                                   counting length, default false
- * @param  {String|Array}   [options.excludes] elements' selector you want ignore
- * @param  {Number}         [options.length] how many letters(words if `byWords` is true)
- *                                           you want reserve
- * @param  {Boolean}        [options.byWords] if true, length means how many words to reserve
- * @param  {Boolean|Number} [options.reserveLastWord] how to deal with when truncate in the middle of a word
- *                                1. by default, just cut at that position.
- *                                2. set it to true, with max exceed 10 letters can exceed to reserver the last word
- *                                3. set it to a positive number decide how many letters can exceed to reserve the last word
- *                                4. set it to negetive number to remove the last word if cut in the middle.
- * @param  {Boolean}        [options.trimTheOnlyWord] whether to trim the only word when `reserveLastWord` < 0
- *                                if reserveLastWord set to negetive number, and there is only one word in the html string,
- *                                 when trimTheOnlyWord set to true, the extra letters will be cutted if word's length longer
- *                                 than `length`.
- *                                see issue #23 for more details
- * @param  {Boolean}        [options.keepWhitespaces] keep whitespaces, by default continuous
- *                                spaces will be replaced with one space
- *                                set it true to reserve them, and continuous spaces will count as one
- * @return {String}
+ * custom node strategy, default to Cheerio<AnyNode>
+ * * 'remove' to remove the node
+ * * 'keep' to keep the node(and anything inside it) anyway
+ * * Cheerio<AnyNode> truncate the returned node
+ * * undefined or any falsy value to truncate original node
  */
-truncate(html, [length], [options])
+type ICustomNodeStrategy = (node: Cheerio<AnyNode>) => 'remove' | 'keep' | Cheerio<AnyNode> | undefined
+
+/**
+ * truncate-html full options object
+ */
+interface IFullOptions {
+  /**
+   * remove all tags, default false
+   */
+  stripTags: boolean
+  /**
+   * ellipsis sign, default '...'
+   */
+  ellipsis: string
+  /**
+   * decode html entities(e.g. convert `&amp;` to `&`) before counting length, default false
+   */
+  decodeEntities: boolean
+  /**
+   * elements' selector you want ignore
+   */
+  excludes: string | string[]
+  /**
+   * custom node strategy, default to Cheerio<AnyNode>
+   * * 'remove' to remove the node
+   * * 'keep' to keep the node(and anything inside it) anyway
+   * * Cheerio<AnyNode> truncate the returned node
+   * * undefined or any falsy value to truncate original node
+   */
+  customNodeStrategy: ICustomNodeStrategy
+  /**
+   * how many letters(words if `byWords` is true) you want reserve
+   */
+  length: number
+  /**
+   * if true, length means how many words to reserve
+   */
+  byWords: boolean
+  /**
+   * how to deal with when truncate in the middle of a word
+   *  1. by default, just cut at that position.
+   *  2. set it to true, with max exceed 10 letters can exceed to reserver the last word
+   *  3. set it to a positive number decide how many letters can exceed to reserve the last word
+   *  4. set it to negative number to remove the last word if cut in the middle.
+   */
+  reserveLastWord: boolean | number
+  /**
+   * if reserveLastWord set to negative number, and there is only one word in the html string,  when trimTheOnlyWord set to true, the extra letters will be sliced if word's length longer than `length`.
+   * see issue #23 for more details
+   */
+  trimTheOnlyWord: boolean
+  /**
+   * keep whitespaces, by default continuous paces will
+   *  be replaced with one space, set it true to keep them
+   */
+  keepWhitespaces: boolean
+}
+
+/**
+ * options interface for function
+ */
+type IOptions = Partial<IFullOptions>
+
+function truncate(html: string | CheerioAPI, length?: number | IOptions,  truncateOptions?: IOptions): string
 // and truncate.setup to change default options
-truncate.setup(options)
+truncate.setup(options: IOptions): void
 ```
 
 ### Default options
@@ -92,7 +133,7 @@ You can change default options by using `truncate.setup`
 
 e.g.
 
-```js
+```ts
 truncate.setup({ stripTags: true, length: 10 })
 truncate('<p><img src="xxx.jpg">Hello from earth!</p>')
 // => Hello from
@@ -100,7 +141,7 @@ truncate('<p><img src="xxx.jpg">Hello from earth!</p>')
 
 or use existing [cheerio instance](https://github.com/cheeriojs/cheerio#loading)
 
-```js
+```ts
 import * as cheerio from 'cheerio'
 truncate.setup({ stripTags: true, length: 10 })
 // truncate option `decodeEntities` will not work
@@ -114,11 +155,67 @@ truncate($)
 // => Hello from
 ```
 
+
 ## Notice
 
 ### Typescript support
 
 This lib is written with typescript and has a type definition file along with it. ~~You may need to update your `tsconfig.json` by adding `"esModuleInterop": true` to the `compilerOptions` if you encounter some typing errors, see [#19](https://github.com/oe/truncate-html/issues/19).~~
+
+```ts
+import truncate, { type IOptions } from 'truncate-html'
+
+
+const html = '<p><img src="abc.png"><i>italic<b>bold</b></i>This is a string</p> for test.'
+
+const options: IOptions = {
+  length: 10,
+  byWords: true
+}
+
+truncate(html, options)
+// => <p><img src="abc.png"><i>italic<b>bold...</b></i></p>
+```
+
+### custom node truncate strategy
+In complex html string, you may want to keep some special elements and truncate the others. You can use `customNodeStrategy` to achieve this:
+* return `'remove'` to remove the node
+* `'keep'` to keep the node(and anything inside it) anyway
+* `Cheerio<AnyNode>` to truncate the returned node, or any falsy value to truncate the original node.
+
+```ts
+import truncate, { type IOptions, type ICustomNodeStrategy } from 'truncate-html'
+
+// argument node is a cheerio instance
+const customNodeStrategy: ICustomNodeStrategy = node => {
+  // remove img tag
+  if (node.is('img')) {
+    return 'remove'
+  }
+  // keep italic tag and its children
+  if (node.is('i')) {
+    return 'keep'
+  }
+  // truncate summary tag that inside details tag instead of details tag
+  if (node.is('details')) {
+    return node.find('summary')
+  }
+}
+
+const html = '<div><img src="abc.png"><i>italic<b>bold</b></i><details><summary>Click me</summary><p>Some details</p></details>This is a string</div> for test.'
+
+const options: IOptions = {
+  length: 10,
+  customNodeStrategy
+}
+
+truncate(html, options)
+// => <div><i>italic<b>bold</b></i><details><summary>Click me</summary><p>Some details</p></details>Th...</div>
+
+
+```
+
+
 
 ### About final string length
 
@@ -240,6 +337,34 @@ truncate(html, {
 })
 // returns: <p> test for &lt;p&gt; &#x4E2D;&#x6587; str...</p>
 // to fix this, see below for instructions
+
+
+// custom node strategy to keep some special elements
+var html = '<p><img src="abc.png"><i>italic<b>bold</b></i>This is a string</p> for test.'
+truncate(html, {
+  length: 10,
+  customNodeStrategy: node => {
+    if (node.is('img')) {
+      return 'remove'
+    }
+    if (node.is('i')) {
+      return 'keep'
+    }
+  }
+})
+// returns: <p><i>italic<b>bold</b></i>This is a ...</p>
+
+// custom node strategy to truncate summary instead of original node
+var html = '<div><details><summary>Click me</summary><p>Some details</p></details>other things</div>'
+truncate(html, {
+  length: 10,
+  customNodeStrategy: node => {
+    if (node.is('details')) {
+      return node.find('summary')
+    }
+  }
+})
+// returns: <div><details><summary>Click me</summary><p>Some details</p></details>ot...</div>
 ```
 
 for More usages, check [truncate.spec.ts](./test/truncate.spec.ts)
