@@ -1,5 +1,6 @@
+import { describe, it, expect, afterEach } from 'vitest'
 import truncate from '../src/truncate'
-import cheerio from 'cheerio'
+import cheerio, { AnyNode, Cheerio } from 'cheerio'
 
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {
@@ -171,6 +172,17 @@ describe('Truncate html', () => {
         ).toBe(expected)
       })
 
+      it('should remove the last word if the edge if not the only one word', () => {
+        const test = '<p>abc internationalization</p>'
+        const expected = '<p>abc ...</p>'
+
+        expect(
+          truncate(test, 7, {
+            reserveLastWord: -1 // exceed 10 letters
+          })
+        ).toBe(expected)
+      })
+
       it('should cut the only word if trimTheOnlyWord true', () => {
         const test = '<p>internationalization</p>'
         const expected = '<p>interna...</p>'
@@ -189,7 +201,7 @@ describe('Truncate html', () => {
 
         expect(
           truncate(test, 7, {
-            reserveLastWord: -1 // exceed 10 letters
+            reserveLastWord: true // exceed 10 letters
           })
         ).toBe(expected)
       })
@@ -643,6 +655,79 @@ describe('Truncate html', () => {
       const expected = 'Hello there  💩  💩  💩‍'
 
       expect(truncate(test, 20)).toEqual(expected)
+    })
+  })
+
+  describe('customNodeStrategy', () => {
+
+    it('should works with customNodeStrategy is Keep', () => {
+      const test = '<p>123456789<i>abc</i>efghijk</p>'
+      const expected = '<p>123456789<i>abc</i>efg...</p>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'I') return 'keep'
+        return
+      }
+      // @ts-ignore
+      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+    })
+
+    it('should works with customNodeStrategy is remove', () => {
+      const test = '<p>123456789<i>abc</i>efghijk</p>'
+      const expected = '<p>123456789efg...</p>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'I') return 'remove'
+        return
+      }
+      // @ts-ignore
+      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+    })
+
+    it('should works with customNodeStrategy is custom node', () => {
+      const test = '<div>123456789<details><summary>abc</summary>hello cccc</details></div>'
+      const expected = '<div>123456789<details><summary>abc</summary>hello cccc</details></div>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'DETAILS') {
+          return node.find('summary')
+        }
+        return
+      }
+      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+    })
+
+    it('should works with customNodeStrategy is custom node', () => {
+      const test = '<div>123456789<details><summary>abc</summary>hello cccc</details></div>'
+      const expected = '<div>123456789<details><summary>abc</summary>hello cccc</details></div>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'DETAILS') {
+          return node.find('summary')
+        }
+        return
+      }
+      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+    })
+
+    it('should works with customNodeStrategy is custom node 2', () => {
+      const test = '<div>123456789<details><summary>abc</summary>hello cccc</details>word</div>'
+      const expected = '<div>123456789<details><summary>abc...</summary>hello cccc</details></div>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'DETAILS') {
+          return node.find('summary')
+        }
+        return
+      }
+      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+    })
+
+    it('should works with customNodeStrategy is custom node 3', () => {
+      const test = '<div>123456789<details><summary>abc</summary>hello cccc</details>word</div>'
+      const expected = '<div>123456789<details><summary>abc</summary>hello cccc</details>w...</div>'
+      const customNodeStrategy = (node: Cheerio<AnyNode>) => {
+        if (node.prop('tagName') === 'DETAILS') {
+          return node.find('summary')
+        }
+        return
+      }
+      expect(truncate(test, 13, { customNodeStrategy } )).toEqual(expected)
     })
   })
 })
