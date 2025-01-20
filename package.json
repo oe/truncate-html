@@ -5,12 +5,6 @@
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
   "types": "dist/truncate.d.ts",
-  "exports": {
-    ".": {
-      "import": "./dist/truncate.es.js",
-      "require": "./dist/truncate.cjs.js"
-    }
-  },
   "files": [
     "dist"
   ],
