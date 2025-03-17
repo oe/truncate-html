@@ -96,20 +96,20 @@ const defaultOptions: IOptions = {
 // an special object to store user's default options, keep the defaultOptions clean
 let userDefaults: IOptions = defaultOptions
 
-export default function truncate(html: string | CheerioAPI, length?: number | IOptions,  truncateOptions?: IOptions) {
+export default function truncate(html: string | CheerioAPI, length?: number | IOptions,  truncateOptions?: IOptions): string {
   const options = sanitizeOptions(length, truncateOptions)
 
   if (!html ||
     isNaN(options.length) ||
     options.length < 1 ||
     options.length === Infinity) {
-    return html
+    return isCheerioInstance(html) ? html.html() ?? '' : html;
   }
 
   let $: CheerioAPI
 
   if (isCheerioInstance(html)) {
-    $ = html as CheerioAPI
+    $ = html
   } else {
     // Add a wrapper for text node without tag like:
     //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
@@ -167,7 +167,7 @@ export default function truncate(html: string | CheerioAPI, length?: number | IO
   }
 
   travelChildren($html)
-  return $html.html()
+  return $html.html() ?? ''
 }
 
 truncate.setup = function (options: IOptions) {
