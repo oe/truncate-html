@@ -16,9 +16,10 @@ describe('Truncate html', () => {
     })
 
     it('should NOT truncate a string if NO length provided $', () => {
-      const html = cheerio.load('string')
+      const html = 'string'
+      const $ = cheerio.load(html)
 
-      expect(truncate(html)).toBe(html)
+      expect(truncate($)).toBe('<html><head></head><body>string</body></html>')
     })
 
     it('should NOT truncate a string if length is less than or equal to zero', () => {
@@ -31,7 +32,7 @@ describe('Truncate html', () => {
       const html = 'string'
       const $ = cheerio.load(html)
 
-      expect(truncate($, 0)).toBe($)
+      expect(truncate($, 0)).toBe('<html><head></head><body>string</body></html>')
     })
   })
 
