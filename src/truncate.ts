@@ -103,7 +103,7 @@ export default function truncate(html: string | CheerioAPI, length?: number | IO
     isNaN(options.length) ||
     options.length < 1 ||
     options.length === Infinity) {
-    return isCheerioInstance(html) ? html.html() ?? '' : html;
+    return isCheerioInstance(html) ? (html.html() || '') : html
   }
 
   let $: CheerioAPI
@@ -113,6 +113,7 @@ export default function truncate(html: string | CheerioAPI, length?: number | IO
   } else {
     // Add a wrapper for text node without tag like:
     //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
+    // the third parameter is false to prevent wrap html in html/body tags
     $ = cheerio.load(`${html}`, {
       decodeEntities: options.decodeEntities
     }, false)
@@ -167,7 +168,7 @@ export default function truncate(html: string | CheerioAPI, length?: number | IO
   }
 
   travelChildren($html)
-  return $html.html() ?? ''
+  return $html.html() || ''
 }
 
 truncate.setup = function (options: IOptions) {

@@ -5,7 +5,7 @@ import cheerio, { AnyNode, Cheerio } from 'cheerio'
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {
     it('should NOT truncate a string if no string provided', () => {
-      // @ts-ignore
+      // @ts-expect-error test for null
       expect(truncate(null)).toBe(null)
     })
 
@@ -14,6 +14,23 @@ describe('Truncate html', () => {
 
       expect(truncate(html)).toBe(html)
     })
+
+    it("should NOT truncate a empty string", () => {
+      const html = "";
+      expect(truncate(html, 10)).toBe(html);
+    });
+    it("should NOT truncate a empty string instance", () => {
+      const html = "";
+      // third parameter for removing the document wrapper
+      const $ = cheerio.load(html, {}, false);
+      expect(truncate($)).toBe('');
+    });
+
+    it("should NOT truncate a comment string", () => {
+      const html = "<!-- comment -->";
+
+      expect(truncate(html, 2)).toBe('');
+    });
 
     it('should NOT truncate a string if NO length provided $', () => {
       const html = 'string'
@@ -576,17 +593,17 @@ describe('Truncate html', () => {
       truncate.setup({
         byWords: false,
         stripTags: false,
-        ellipsis: '...',
-        // @ts-ignore
+        ellipsis: "...",
+        // @ts-expect-error only for test
         length: null,
         decodeEntities: false,
         keepWhitespaces: false,
-        excludes: '',
-        reserveLastWord: false
-      })
+        excludes: "",
+        reserveLastWord: false,
+      });
     })
     it('should works well if setup with empty', () => {
-      // @ts-ignore
+      // @ts-expect-error only for test
       truncate.setup()
       const test = 'hello from earth'
       const expected = 'hello from e...'
@@ -668,19 +685,17 @@ describe('Truncate html', () => {
         if (node.prop('tagName') === 'I') return 'keep'
         return
       }
-      // @ts-ignore
       expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
     })
 
     it('should works with customNodeStrategy is remove', () => {
-      const test = '<p>123456789<i>abc</i>efghijk</p>'
-      const expected = '<p>123456789efg...</p>'
+      const test = "<p>123456789<i>abc</i>efghijk</p>";
+      const expected = "<p>123456789efg...</p>";
       const customNodeStrategy = (node: Cheerio<AnyNode>) => {
-        if (node.prop('tagName') === 'I') return 'remove'
-        return
-      }
-      // @ts-ignore
-      expect(truncate(test, 12, { customNodeStrategy } )).toEqual(expected)
+        if (node.prop("tagName") === "I") return "remove";
+        return;
+      };
+      expect(truncate(test, 12, { customNodeStrategy })).toEqual(expected);
     })
 
     it('should works with customNodeStrategy is custom node', () => {
