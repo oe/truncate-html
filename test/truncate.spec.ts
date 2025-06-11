@@ -298,6 +298,12 @@ describe('Truncate html', () => {
       expect(truncate(html, 10, options)).toBe(expected)
     })
 
+    it('should work with no text', () => {
+      const test = '<p></p>'
+      const expected = ''
+      expect(truncate(test, 10, { stripTags: true })).toBe(expected)
+    })
+
     it('should remove all tags', () => {
       const html =
         '<p><img src="abc.png">This <hr>is a string</p><br> for test.'
