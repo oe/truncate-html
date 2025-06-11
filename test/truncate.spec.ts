@@ -637,6 +637,20 @@ describe('Truncate html', () => {
   })
 
   describe('should correcty handle text with emoji characters', () => {
+    afterEach(function () {
+      truncate.setup({
+        byWords: false,
+        stripTags: false,
+        ellipsis: "...",
+        // @ts-expect-error only for test
+        length: null,
+        decodeEntities: false,
+        keepWhitespaces: false,
+        excludes: "",
+        reserveLastWord: false,
+      });
+    })
+
     it('emojis with character length more than 1', () => {
       const test = '💩💩💩💩💩'
       const expected = '💩💩💩...'
@@ -674,6 +688,14 @@ describe('Truncate html', () => {
 
       expect(truncate(test, 20)).toEqual(expected)
     })
+
+    it("emojis with byWords setting", () => {
+      truncate.setup({ byWords: true })
+      const test = 'Hello there,   👋 how are you??'
+      const expected = 'Hello there, 👋...'
+
+      expect(truncate(test, 3)).toEqual(expected)
+    });
   })
 
   describe('customNodeStrategy', () => {
