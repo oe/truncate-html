@@ -14,6 +14,9 @@
   <a href="https://www.npmjs.com/package/truncate-html">
     <img src="https://img.shields.io/npm/dm/truncate-html.svg" alt="npm downloads">
   </a>
+  <a href="https://codecov.io/gh/oe/truncate-html">
+    <img src="https://codecov.io/gh/oe/truncate-html/branch/main/graph/badge.svg" alt="Coverage Status">
+  </a>
 </div>
 
 <br>

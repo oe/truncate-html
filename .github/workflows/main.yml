@@ -33,3 +33,9 @@ jobs:
 
     - name: build lib
       run: yarn test && yarn build
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v5
+      with:
+        slug: oe/postcss-logical-polyfill
+        token: ${{ secrets.CODECOV_TOKEN }}
