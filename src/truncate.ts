@@ -181,9 +181,11 @@ function truncateText(text: string, options: ITruncateOptions, isLastNode?: bool
     text = text.replace(/\s+/g, ' ')
   }
   const byWords = options.byWords
-  const match = text.match(astralRange)
-  const astralSafeCharacterArray = match === null ? [] : match
-  const strLen = match === null ? 0 : astralSafeCharacterArray.length
+  const astralSafeCharacterArray = text.match(astralRange)
+  if (!astralSafeCharacterArray) {
+    return ''
+  }
+  const strLen = astralSafeCharacterArray.length
   let idx = 0
   let count = 0
   let prevIsBlank = byWords
@@ -214,13 +216,7 @@ function truncateText(text: string, options: ITruncateOptions, isLastNode?: bool
   if (options.limit) {
     return text
   }
-  let str: string
-  if (byWords) {
-    str = text.substring(0, idx)
-  } else {
-    // @ts-expect-error fix ts error caused by regex
-    str = astralSafeCharacterArray.length ? substr(astralSafeCharacterArray, idx, options) : ''
-  }
+  const str = byWords ? astralSafeCharacterArray.slice(0, idx).join('') : substr(astralSafeCharacterArray, idx,  options)
   if (str === text) {
     // if is lat node, no need of ellipsis, or add it
     return isLastNode ? text : text + options.ellipsis
