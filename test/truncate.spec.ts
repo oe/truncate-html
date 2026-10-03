@@ -1,6 +1,8 @@
 import { describe, it, expect, afterEach } from 'vitest'
 import truncate from '../src/truncate'
-import cheerio, { AnyNode, Cheerio } from 'cheerio'
+import * as cheerio from 'cheerio'
+import type { Cheerio } from 'cheerio'
+import type { AnyNode } from 'domhandler'
 
 describe('Truncate html', () => {
   describe('should works well when false params are given', () => {

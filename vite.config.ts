@@ -9,6 +9,9 @@ export default defineConfig({
     environment: 'node',
     include: ['test/**/*.spec.ts'],
     exclude: ['node_modules', 'scripts', 'dist'],
+    coverage: {
+      include: ['src/**/*.ts'],
+    },
   },
   build: {
     minify: false,

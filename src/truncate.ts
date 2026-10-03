@@ -1,4 +1,5 @@
-import cheerio, { CheerioAPI, Cheerio, AnyNode } from 'cheerio'
+import { load, type CheerioAPI, type Cheerio } from 'cheerio'
+import type { AnyNode } from 'domhandler'
 
 /**
  * custom node strategy, default to Cheerio<AnyNode>
@@ -22,7 +23,9 @@ export interface IFullOptions {
    */
   ellipsis: string
   /**
-   * decode html entities(e.g. convert `&amp;` to `&`) before counting length, default false
+   * @deprecated Retained for compatibility. String input always decodes entities
+   * with parse5, regardless of this value. Existing Cheerio instances retain
+   * their own parser configuration.
    */
   decodeEntities: boolean
   /**
@@ -79,7 +82,7 @@ const defaultOptions: IOptions = {
   stripTags: false,
   // postfix of the string
   ellipsis: '...',
-  // decode html entities
+  // legacy option; parse5 always decodes entities
   decodeEntities: false,
   // whether truncate by words
   byWords: false,
@@ -111,12 +114,10 @@ export default function truncate(html: string | CheerioAPI, length?: number | IO
   if (isCheerioInstance(html)) {
     $ = html
   } else {
-    // Add a wrapper for text node without tag like:
-    //   <p>Lorem ipsum <p>dolor sit => <div><p>Lorem ipsum <p>dolor sit</div>
-    // the third parameter is false to prevent wrap html in html/body tags
-    $ = cheerio.load(`${html}`, {
-      decodeEntities: options.decodeEntities
-    }, false)
+    // Keep parse5's HTML parsing and entity decoding, as in 1.x. Moving
+    // decodeEntities under `xml` would switch to htmlparser2 and change output.
+    // Fragment mode prevents extra html/head/body wrappers.
+    $ = load(`${html}`, {}, false)
   }
 
   const $html = $.root()

@@ -1,12 +1,13 @@
 {
   "name": "truncate-html",
-  "version": "1.2.2",
+  "version": "2.0.0",
   "description": "Truncate HTML and Keep Tags",
   "main": "dist/truncate.cjs.js",
   "module": "dist/truncate.es.js",
   "types": "dist/truncate.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "MIGRATION.md"
   ],
   "scripts": {
     "dev": "tsx ./test/demo.ts",
@@ -14,14 +15,21 @@
     "prepublish": "yarn test && yarn build",
     "test": "vitest --coverage",
     "test:server": "vitest --watch",
+    "test:package": "node scripts/test-package.mjs",
+    "typecheck": "tsc --noEmit",
     "lint": "eslint src"
   },
+  "engines": {
+    "node": ">=20.18.1"
+  },
   "dependencies": {
-    "cheerio": "1.0.0-rc.12"
+    "cheerio": "1.2.0",
+    "domhandler": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",
     "@types/eslint__js": "^8.42.3",
+    "@types/node": "^20.19.0",
     "@vitest/coverage-v8": "2.1.2",
     "eslint": "^9.12.0",
     "tsx": "^4.19.1",

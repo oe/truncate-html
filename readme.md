@@ -35,6 +35,8 @@ truncate('<p><img src="xxx.jpg">Hello from earth!</p>', 2, { byWords: true })
 or <br>
 `yarn add truncate-html`
 
+Requires **Node.js 20.18.1 or newer**. See [Migrating to 2.0](./MIGRATION.md) for Node.js and Cheerio TypeScript compatibility changes.
+
 ## Try it online
 
 Click **<https://npm.runkit.com/truncate-html>** to try.
@@ -64,7 +66,9 @@ interface IFullOptions {
    */
   ellipsis: string
   /**
-   * decode html entities(e.g. convert `&amp;` to `&`) before counting length, default false
+   * @deprecated Retained for compatibility. String input always decodes entities
+   * with parse5, regardless of this value. Existing Cheerio instances retain
+   * their own parser configuration.
    */
   decodeEntities: boolean
   /**
@@ -147,13 +151,8 @@ or use existing [cheerio instance](https://github.com/cheeriojs/cheerio#loading)
 ```ts
 import * as cheerio from 'cheerio'
 truncate.setup({ stripTags: true, length: 10 })
-// truncate option `decodeEntities` will not work
-//    you should config it in cheerio options by yourself
-const $ = cheerio.load('<p><img src="xxx.jpg">Hello from earth!</p>', {
-  /** set decodeEntities if you need it */
-  decodeEntities: true
-  /* any cheerio instance options*/
-}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
+// Existing instances retain their own parser configuration.
+const $ = cheerio.load('<p><img src="xxx.jpg">Hello from earth!</p>', {}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
 truncate($)
 // => Hello from
 ```
@@ -230,18 +229,21 @@ All html comments `<!-- xxx -->` will be removed
 
 When dealing with none alphabetic languages, such as Chinese/Japanese/Korean, they don't separate words with whitespaces, so options `byWords` and `reserveLastWord` should only works well with alphabetic languages.
 
-And the only dependency of this project `cheerio` has an issue when dealing with none alphabetic languages, see [Known Issues](#known-issues) for details.
+HTML entities are decoded before counting characters; CJK characters remain Unicode in the serialized output.
+
+### Entity handling
+
+String input uses parse5, which always decodes entities before counting characters. The legacy `decodeEntities` option is accepted but deprecated; both `true` and `false` preserve the existing behavior. See [the migration guide](./MIGRATION.md) for details.
 
 ### Using existing cheerio instance
 
-If you want to use existing cheerio instance, truncate option `decodeEntities` will not work, you should set it in your own cheerio instance:
+Use Cheerio 1.2.0 when creating instances passed to truncate-html. The instance retains its parser configuration; truncate-html does not override it:
 
 ```js
-var html = '<p><img src="abc.png">This is a string</p> for test.'
-const $ = cheerio.load(`${html}`, {
-  decodeEntities: true
-  /** other cheerio options */
-}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
+import { load } from 'cheerio'
+
+const html = '<p><img src="abc.png">This is a string</p> for test.'
+const $ = load(html, {}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
 truncate($, 10)
 
 ```
@@ -322,22 +324,21 @@ truncate(html, {
 })
 // returns: <p> test for &lt;p&gt; encode...</p>
 
-// when set decodeEntities false
+// The legacy decodeEntities option does not change parse5 entity handling
 var html = '<p>&nbsp;test for &lt;p&gt; encoded string</p>'
 truncate(html, {
   length: 20,
   decodeEntities: false // this is the default value
 })
-// returns: <p>&nbsp;test for &lt;p...</p>
+// returns: <p> test for &lt;p&gt; encode...</p>
 
-// and there may be a surprise by setting `decodeEntities` to true  when handing CJK characters
+// CJK characters remain Unicode in the output
 var html = '<p>&nbsp;test for &lt;p&gt; 中文 string</p>'
 truncate(html, {
   length: 20,
   decodeEntities: true
 })
-// returns: <p> test for &lt;p&gt; &#x4E2D;&#x6587; str...</p>
-// to fix this, see below for instructions
+// returns: <p> test for &lt;p&gt; 中文 str...</p>
 
 
 // custom node strategy to keep some special elements
