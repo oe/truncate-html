@@ -26,7 +26,7 @@
 ```javascript
 const truncate = require('truncate-html')
 truncate('<p><img src="xxx.jpg">Hello from earth!</p>', 2, { byWords: true })
-// => <p><img src="xxx.jpg">Hello from ...</p>
+// => <p><img src="xxx.jpg">Hello from...</p>
 ```
 
 ## Installation
@@ -143,7 +143,7 @@ e.g.
 ```ts
 truncate.setup({ stripTags: true, length: 10 })
 truncate('<p><img src="xxx.jpg">Hello from earth!</p>')
-// => Hello from
+// => Hello from...
 ```
 
 or use existing [cheerio instance](https://github.com/cheeriojs/cheerio#loading)
@@ -154,7 +154,7 @@ truncate.setup({ stripTags: true, length: 10 })
 // Existing instances retain their own parser configuration.
 const $ = cheerio.load('<p><img src="xxx.jpg">Hello from earth!</p>', {}, false) // third parameter is for `isDocument` option, set to false to get rid of extra wrappers, see cheerio's doc for details
 truncate($)
-// => Hello from
+// => Hello from...
 ```
 
 
@@ -171,7 +171,7 @@ import truncate, { type IOptions } from 'truncate-html'
 const html = '<p><img src="abc.png"><i>italic<b>bold</b></i>This is a string</p> for test.'
 
 const options: IOptions = {
-  length: 10,
+  length: 2,
   byWords: true
 }
 
@@ -273,12 +273,12 @@ truncate(html, 10, { stripTags: true })
 //      it will not act as you wish
 var html = '<p><img src="abc.png">This is a string</p> for test.'
 truncate(html, 3, { byWords: true })
-// returns: <p><img src="abc.png">This is a ...</p>
+// returns: <p><img src="abc.png">This is a...</p>
 
 // with options, keep whitespaces
 var html = '<p>         <img src="abc.png">This is a string</p> for test.'
 truncate(html, 10, { keepWhitespaces: true })
-// returns: <p>         <img src="abc.png">This is a ...</p>
+// returns: <p>         <img src="abc.png">This is a...</p>
 
 // combine length and options
 var html = '<p><img src="abc.png">This is a string</p> for test.'
